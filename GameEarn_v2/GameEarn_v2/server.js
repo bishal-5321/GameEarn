@@ -1,13 +1,15 @@
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
-const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
-const crypto = require("crypto");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// =========================================================
+// DATABASE
+// =========================================================
 
 const pool = process.env.DATABASE_URL
   ? new Pool({
@@ -18,17 +20,9 @@ const pool = process.env.DATABASE_URL
     })
   : null;
 
-const mailer = process.env.SMTP_HOST
-  ? nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: +(process.env.SMTP_PORT || 587),
-      secure: String(process.env.SMTP_SECURE || "false") === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    })
-  : null;
+// =========================================================
+// MIDDLEWARE
+// =========================================================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +42,10 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// =========================================================
+// DATABASE HELPER
+// =========================================================
+
 const db = (query, params = []) => {
   if (!pool) {
     throw new Error("DATABASE_URL is not configured.");
@@ -56,13 +54,16 @@ const db = (query, params = []) => {
   return pool.query(query, params);
 };
 
+// =========================================================
+// DATABASE INITIALIZATION + MIGRATION
+// =========================================================
+
 async function init() {
-  if (!pool) return;
+  if (!pool) {
+    throw new Error("DATABASE_URL is not configured.");
+  }
 
-  // =========================================================
-  // USERS TABLE
-  // =========================================================
-
+  // USERS
   await db(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -71,52 +72,14 @@ async function init() {
       password_hash TEXT NOT NULL,
       balance_cents INTEGER DEFAULT 0,
       referral_code VARCHAR(20) UNIQUE NOT NULL,
-      email_verified BOOLEAN DEFAULT FALSE,
+      email_verified BOOLEAN DEFAULT TRUE,
       verification_token TEXT,
       verification_expires TIMESTAMPTZ,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
 
-  // =========================================================
-  // TRANSACTIONS TABLE
-  // =========================================================
-
-  await db(`
-    CREATE TABLE IF NOT EXISTS transactions (
-      id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      type VARCHAR(30),
-      amount_cents INTEGER,
-      description TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-
-  // =========================================================
-  // WITHDRAWALS TABLE
-  // =========================================================
-
-  await db(`
-    CREATE TABLE IF NOT EXISTS withdrawals (
-      id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      amount_cents INTEGER,
-      method VARCHAR(30),
-      details TEXT,
-      status VARCHAR(20) DEFAULT 'PENDING',
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-
-  // =========================================================
-  // DATABASE MIGRATION
-  //
-  // This fixes older GameEarn databases.
-  // CREATE TABLE IF NOT EXISTS does NOT add missing columns
-  // to a table that already exists.
-  // =========================================================
-
+  // Add missing columns to old databases
   await db(`
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS balance_cents INTEGER DEFAULT 0
@@ -129,22 +92,31 @@ async function init() {
 
   await db(`
     ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT FALSE
-  `);
-
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS verification_token TEXT
-  `);
-
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS verification_expires TIMESTAMPTZ
+    ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT TRUE
   `);
 
   await db(`
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
+  `);
+
+  // Make existing accounts usable without verification
+  await db(`
+    UPDATE users
+    SET email_verified = TRUE
+    WHERE email_verified IS NULL OR email_verified = FALSE
+  `);
+
+  // TRANSACTIONS
+  await db(`
+    CREATE TABLE IF NOT EXISTS transactions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      type VARCHAR(30),
+      amount_cents INTEGER,
+      description TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
   `);
 
   await db(`
@@ -170,6 +142,19 @@ async function init() {
   await db(`
     ALTER TABLE transactions
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
+  `);
+
+  // WITHDRAWALS
+  await db(`
+    CREATE TABLE IF NOT EXISTS withdrawals (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      amount_cents INTEGER,
+      method VARCHAR(30),
+      details TEXT,
+      status VARCHAR(20) DEFAULT 'PENDING',
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
   `);
 
   await db(`
@@ -202,8 +187,12 @@ async function init() {
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
   `);
 
-  console.log("Database initialization/migration completed.");
+  console.log("Database initialization completed.");
 }
+
+// =========================================================
+// AUTH
+// =========================================================
 
 const auth = (req, res, next) => {
   if (req.session.userId) {
@@ -215,10 +204,8 @@ const auth = (req, res, next) => {
   });
 };
 
-const tok = () => crypto.randomBytes(32).toString("hex");
-
 // =========================================================
-// HEALTH
+// HEALTH CHECK
 // =========================================================
 
 app.get("/api/health", (req, res) => {
@@ -235,7 +222,10 @@ app.get("/api/health", (req, res) => {
 app.post("/api/register", async (req, res) => {
   try {
     const username = String(req.body.username || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
     const password = String(req.body.password || "");
 
     if (!username || !email || !password) {
@@ -250,11 +240,9 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
-    const token = tok();
-
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const referralCode = crypto
+    const referralCode = require("crypto")
       .randomBytes(5)
       .toString("hex")
       .toUpperCase();
@@ -266,90 +254,27 @@ app.post("/api/register", async (req, res) => {
         email,
         password_hash,
         referral_code,
-        verification_token,
-        verification_expires
+        email_verified
       )
       VALUES (
         $1,
         $2,
         $3,
         $4,
-        $5,
-        NOW() + INTERVAL '24 hours'
+        TRUE
       )
       `,
       [
         username,
         email,
         passwordHash,
-        referralCode,
-        token
+        referralCode
       ]
     );
 
-    // =====================================================
-    // EMAIL VERIFICATION
-    // =====================================================
-
-    if (mailer) {
-      const base =
-        process.env.APP_URL ||
-        `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
-
-      const verifyUrl =
-        `${base}/verify.html?token=${token}`;
-
-      await mailer.sendMail({
-        from:
-          process.env.SMTP_FROM ||
-          process.env.SMTP_USER,
-
-        to: email,
-
-        subject: "Verify your GameEarn email",
-
-        html: `
-          <h2>Welcome to GameEarn</h2>
-
-          <p>
-            Thanks for creating your GameEarn account.
-          </p>
-
-          <p>
-            Click the button below to verify your email:
-          </p>
-
-          <p>
-            <a href="${verifyUrl}"
-               style="
-                 display:inline-block;
-                 padding:12px 20px;
-                 background:#6c5ce7;
-                 color:white;
-                 text-decoration:none;
-                 border-radius:8px;
-               ">
-              Verify Email
-            </a>
-          </p>
-
-          <p>
-            This verification link expires in 24 hours.
-          </p>
-        `
-      });
-
-      return res.json({
-        ok: true,
-        message:
-          "Account created. Check your email to verify it."
-      });
-    }
-
-    return res.json({
+    res.json({
       ok: true,
-      message:
-        "Account created, but SMTP email delivery is not configured yet."
+      message: "Account created successfully."
     });
 
   } catch (error) {
@@ -368,160 +293,6 @@ app.post("/api/register", async (req, res) => {
 });
 
 // =========================================================
-// VERIFY EMAIL
-// =========================================================
-
-app.get("/api/verify", async (req, res) => {
-  try {
-    const token = String(req.query.token || "");
-
-    const result = await db(
-      `
-      UPDATE users
-
-      SET
-        email_verified = TRUE,
-        verification_token = NULL,
-        verification_expires = NULL
-
-      WHERE
-        verification_token = $1
-        AND verification_expires > NOW()
-
-      RETURNING id
-      `,
-      [token]
-    );
-
-    if (!result.rowCount) {
-      return res.status(400).json({
-        error: "Invalid or expired verification link."
-      });
-    }
-
-    res.json({
-      ok: true,
-      message: "Email verified. You can now sign in."
-    });
-
-  } catch (error) {
-    console.error("VERIFICATION ERROR:", error);
-
-    res.status(500).json({
-      error: "Verification failed."
-    });
-  }
-});
-
-// =========================================================
-// RESEND VERIFICATION
-// =========================================================
-
-app.post("/api/resend-verification", async (req, res) => {
-  try {
-    const email = String(req.body.email || "")
-      .trim()
-      .toLowerCase();
-
-    const result = await db(
-      `
-      SELECT
-        id,
-        email,
-        email_verified
-
-      FROM users
-
-      WHERE email = $1
-      `,
-      [email]
-    );
-
-    if (
-      !result.rowCount ||
-      result.rows[0].email_verified
-    ) {
-      return res.json({
-        ok: true,
-        message:
-          "If needed, a verification email was sent."
-      });
-    }
-
-    if (!mailer) {
-      return res.status(503).json({
-        error:
-          "Email delivery is not configured yet."
-      });
-    }
-
-    const token = tok();
-
-    await db(
-      `
-      UPDATE users
-
-      SET
-        verification_token = $1,
-        verification_expires =
-          NOW() + INTERVAL '24 hours'
-
-      WHERE id = $2
-      `,
-      [
-        token,
-        result.rows[0].id
-      ]
-    );
-
-    const base =
-      process.env.APP_URL ||
-      `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
-
-    const verifyUrl =
-      `${base}/verify.html?token=${token}`;
-
-    await mailer.sendMail({
-      from:
-        process.env.SMTP_FROM ||
-        process.env.SMTP_USER,
-
-      to: email,
-
-      subject: "Verify your GameEarn email",
-
-      html: `
-        <p>
-          Click below to verify your GameEarn email:
-        </p>
-
-        <p>
-          <a href="${verifyUrl}">
-            Verify your GameEarn email
-          </a>
-        </p>
-      `
-    });
-
-    res.json({
-      ok: true,
-      message: "Verification email sent."
-    });
-
-  } catch (error) {
-    console.error(
-      "RESEND VERIFICATION ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error:
-        "Could not resend verification email."
-    });
-  }
-});
-
-// =========================================================
 // LOGIN
 // =========================================================
 
@@ -531,9 +302,7 @@ app.post("/api/login", async (req, res) => {
       .trim()
       .toLowerCase();
 
-    const password = String(
-      req.body.password || ""
-    );
+    const password = String(req.body.password || "");
 
     const result = await db(
       `
@@ -544,27 +313,26 @@ app.post("/api/login", async (req, res) => {
       [email]
     );
 
-    if (
-      !result.rowCount ||
-      !(await bcrypt.compare(
-        password,
-        result.rows[0].password_hash
-      ))
-    ) {
+    if (!result.rowCount) {
       return res.status(401).json({
         error: "Invalid email or password."
       });
     }
 
-    if (!result.rows[0].email_verified) {
-      return res.status(403).json({
-        error:
-          "Please verify your email before signing in."
+    const user = result.rows[0];
+
+    const passwordCorrect = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
+
+    if (!passwordCorrect) {
+      return res.status(401).json({
+        error: "Invalid email or password."
       });
     }
 
-    req.session.userId =
-      result.rows[0].id;
+    req.session.userId = user.id;
 
     res.json({
       ok: true
@@ -595,10 +363,8 @@ app.post("/api/logout", (req, res) => {
 // CURRENT USER
 // =========================================================
 
-app.get(
-  "/api/me",
-  auth,
-  async (req, res) => {
+app.get("/api/me", auth, async (req, res) => {
+  try {
     const result = await db(
       `
       SELECT
@@ -615,14 +381,27 @@ app.get(
       [req.session.userId]
     );
 
+    if (!result.rowCount) {
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
+
     res.json({
       user: result.rows[0]
     });
+
+  } catch (error) {
+    console.error("ME ERROR:", error);
+
+    res.status(500).json({
+      error: "Could not load account."
+    });
   }
-);
+});
 
 // =========================================================
-// DEMO OFFERS
+// OFFERS
 // =========================================================
 
 const offers = {
@@ -651,34 +430,32 @@ const offers = {
   ]
 };
 
-app.get(
-  "/api/offers",
-  auth,
-  (req, res) => {
-    res.json({
-      offers:
-        Object.entries(offers).map(
-          ([id, data]) => ({
-            id,
-            title: data[0],
-            category: data[1],
-            reward_cents: data[2]
-          })
-        )
-    });
-  }
-);
+// =========================================================
+// GET OFFERS
+// =========================================================
+
+app.get("/api/offers", auth, (req, res) => {
+  res.json({
+    offers: Object.entries(offers).map(
+      ([id, data]) => ({
+        id,
+        title: data[0],
+        category: data[1],
+        reward_cents: data[2]
+      })
+    )
+  });
+});
 
 // =========================================================
-// COMPLETE DEMO OFFER
+// COMPLETE OFFER
 // =========================================================
 
 app.post(
   "/api/offers/:id/complete",
   auth,
   async (req, res) => {
-    const offer =
-      offers[req.params.id];
+    const offer = offers[req.params.id];
 
     if (!offer) {
       return res.status(404).json({
@@ -731,14 +508,10 @@ app.post(
       });
 
     } catch (error) {
-      console.error(
-        "OFFER ERROR:",
-        error
-      );
+      console.error("OFFER ERROR:", error);
 
       res.status(500).json({
-        error:
-          "Could not credit reward."
+        error: "Could not credit reward."
       });
     }
   }
@@ -752,24 +525,36 @@ app.get(
   "/api/transactions",
   auth,
   async (req, res) => {
-    const result = await db(
-      `
-      SELECT *
+    try {
+      const result = await db(
+        `
+        SELECT *
 
-      FROM transactions
+        FROM transactions
 
-      WHERE user_id = $1
+        WHERE user_id = $1
 
-      ORDER BY created_at DESC
+        ORDER BY created_at DESC
 
-      LIMIT 50
-      `,
-      [req.session.userId]
-    );
+        LIMIT 50
+        `,
+        [req.session.userId]
+      );
 
-    res.json({
-      transactions: result.rows
-    });
+      res.json({
+        transactions: result.rows
+      });
+
+    } catch (error) {
+      console.error(
+        "TRANSACTIONS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error: "Could not load transactions."
+      });
+    }
   }
 );
 
@@ -783,37 +568,37 @@ app.post(
   async (req, res) => {
     try {
       const amount = Math.round(
-        +req.body.amount_cents
+        Number(req.body.amount_cents)
       );
 
-      const method =
-        String(req.body.method || "");
+      const method = String(
+        req.body.method || ""
+      );
 
-      const details =
-        String(
-          req.body.details || ""
-        ).trim();
+      const details = String(
+        req.body.details || ""
+      ).trim();
 
+      // Minimum withdrawal = $1
       if (
         !Number.isInteger(amount) ||
         amount < 100
       ) {
         return res.status(400).json({
-          error:
-            "Minimum withdrawal is $1.00."
+          error: "Minimum withdrawal is $1.00."
         });
       }
 
-      if (
-        ![
-          "paypal",
-          "upi",
-          "gift_card",
-          "game_reward"
-        ].includes(method)
-      ) {
+      const allowedMethods = [
+        "paypal",
+        "upi",
+        "gift_card",
+        "game_reward"
+      ];
+
+      if (!allowedMethods.includes(method)) {
         return res.status(400).json({
-          error: "Invalid method."
+          error: "Invalid withdrawal method."
         });
       }
 
@@ -828,17 +613,22 @@ app.post(
         [req.session.userId]
       );
 
-      if (
-        !user.rowCount ||
-        user.rows[0].balance_cents <
-          amount
-      ) {
-        return res.status(400).json({
-          error:
-            "Insufficient balance."
+      if (!user.rowCount) {
+        return res.status(404).json({
+          error: "User not found."
         });
       }
 
+      if (
+        user.rows[0].balance_cents <
+        amount
+      ) {
+        return res.status(400).json({
+          error: "Insufficient balance."
+        });
+      }
+
+      // Remove balance
       await db(
         `
         UPDATE users
@@ -854,33 +644,34 @@ app.post(
         ]
       );
 
-      const withdrawal =
-        await db(
-          `
-          INSERT INTO withdrawals (
-            user_id,
-            amount_cents,
-            method,
-            details
-          )
+      // Create withdrawal
+      const withdrawal = await db(
+        `
+        INSERT INTO withdrawals (
+          user_id,
+          amount_cents,
+          method,
+          details
+        )
 
-          VALUES (
-            $1,
-            $2,
-            $3,
-            $4
-          )
+        VALUES (
+          $1,
+          $2,
+          $3,
+          $4
+        )
 
-          RETURNING id, status
-          `,
-          [
-            req.session.userId,
-            amount,
-            method,
-            details
-          ]
-        );
+        RETURNING id, status
+        `,
+        [
+          req.session.userId,
+          amount,
+          method,
+          details
+        ]
+      );
 
+      // Transaction record
       await db(
         `
         INSERT INTO transactions (
@@ -906,8 +697,7 @@ app.post(
 
       res.json({
         ok: true,
-        withdrawal:
-          withdrawal.rows[0]
+        withdrawal: withdrawal.rows[0]
       });
 
     } catch (error) {
@@ -917,15 +707,14 @@ app.post(
       );
 
       res.status(500).json({
-        error:
-          "Withdrawal request failed."
+        error: "Withdrawal request failed."
       });
     }
   }
 );
 
 // =========================================================
-// FRONTEND FALLBACK
+// FRONTEND
 // =========================================================
 
 app.get("*", (req, res) => {
@@ -939,18 +728,18 @@ app.get("*", (req, res) => {
 });
 
 // =========================================================
-// START SERVER
+// START
 // =========================================================
 
 init()
   .then(() => {
     app.listen(PORT, () => {
       console.log(
-        "GameEarn v2 running on " + PORT
+        "GameEarn v2 running on port " + PORT
       );
     });
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(
       "DATABASE INITIALIZATION ERROR:",
       error
