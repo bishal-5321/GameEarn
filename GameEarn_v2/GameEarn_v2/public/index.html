@@ -1,1 +1,673 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GameEarn</title><link rel="stylesheet" href="/style.css"></head><body><header><a class="brand" href="/">GAME<span>EARN</span></a><nav><a href="#offers">Earn</a><a href="#register">Register</a><a href="#login">Sign in</a></nav></header><main><section class="hero"><div><div class="pill">⚡ PLAY • COMPLETE • EARN</div><h1>Turn free time into <em>real rewards.</em></h1><p>Complete games, apps and tasks, build your USD balance and redeem from $1.</p><div class="actions"><a class="btn" href="#register">Start earning</a><a class="ghost" href="#offers">How it works →</a></div></div><div class="heroCard">💰<b>Earn up to</b><strong>$100</strong><span>on eligible offers</span></div></section><section id="offers"><div class="features"><div class="feature">🎮<h3>Play games</h3><p>Complete eligible milestones.</p></div><div class="feature">📱<h3>Try apps</h3><p>Complete qualifying tasks.</p></div><div class="feature">💵<h3>Redeem</h3><p>Minimum withdrawal $1.</p></div></div></section><section class="auth"><form class="panel" id="register"><small>NEW HERE?</small><h2>Create account</h2><p>Use a real email. Verify it once before signing in.</p><input name="username" placeholder="Username" required><input name="email" type="email" placeholder="Real email address" required><input name="password" type="password" placeholder="Password (6+ characters)" required><button class="btn">Create account</button><p id="rm" class="msg"></p></form><form class="panel" id="login"><small>WELCOME BACK</small><h2>Sign in</h2><input name="email" type="email" placeholder="Email address" required><input name="password" type="password" placeholder="Password" required><button class="btn">Sign in</button><p id="lm" class="msg"></p><button type="button" class="link" onclick="resend()">Resend verification email</button></form></section></main><script>async function post(u,d){let r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)}),j=await r.json();if(!r.ok)throw Error(j.error);return j}register.onsubmit=async e=>{e.preventDefault();try{rm.textContent=(await post("/api/register",Object.fromEntries(new FormData(e.target)))).message}catch(x){rm.textContent=x.message}};login.onsubmit=async e=>{e.preventDefault();try{await post("/api/login",Object.fromEntries(new FormData(e.target)));location="/dashboard.html"}catch(x){lm.textContent=x.message}};async function resend(){let e=login.email.value;if(!e)return lm.textContent="Enter your email first.";try{lm.textContent=(await post("/api/resend-verification",{email:e})).message}catch(x){lm.textContent=x.message}}</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GameEarn</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #06101f;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: auto;
+      padding: 28px 22px 70px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 35px;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .brand span {
+      color: #5b8cff;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 20px;
+      background: #4e82ff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .nav button {
+      background: #14233a;
+      border: 1px solid #29405f;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 40px 0 55px;
+    }
+
+    .tag {
+      color: #70a0ff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    h1 {
+      font-size: 52px;
+      line-height: 1.05;
+      max-width: 800px;
+      margin: 14px auto 18px;
+    }
+
+    .sub,
+    .hint {
+      color: #91a4c0;
+      line-height: 1.6;
+    }
+
+    .sub {
+      font-size: 18px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 42px;
+    }
+
+    .card,
+    .authcard {
+      background: #0d1b2e;
+      border: 1px solid #203754;
+      border-radius: 22px;
+    }
+
+    .card {
+      padding: 27px;
+    }
+
+    .card h3 {
+      font-size: 21px;
+    }
+
+    .card p {
+      color: #8fa2bd;
+      line-height: 1.55;
+    }
+
+    .auth {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .authcard {
+      padding: 32px;
+    }
+
+    .eyebrow {
+      color: #70a0ff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      font-size: 30px;
+      margin: 12px 0;
+    }
+
+    .hint {
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 16px;
+      margin-bottom: 13px;
+      border: 1px solid #294362;
+      border-radius: 13px;
+      background: #081526;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #5b8cff;
+    }
+
+    .msg {
+      min-height: 25px;
+      margin-top: 14px;
+      line-height: 1.45;
+      color: #a8b9d0;
+    }
+
+    .success {
+      color: #65d69b;
+    }
+
+    .error {
+      color: #ff8585;
+    }
+
+    .secondary {
+      background: #172942;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #7186a4;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 800px) {
+      h1 {
+        font-size: 39px;
+      }
+
+      .cards,
+      .auth {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <nav class="nav">
+    <div class="brand">
+      Game<span>Earn</span>
+    </div>
+
+    <button onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">
+      Get started
+    </button>
+  </nav>
+
+
+  <section class="hero">
+
+    <div class="tag">
+      PLAY • COMPLETE • EARN
+    </div>
+
+    <h1>
+      Turn your gaming time into rewards.
+    </h1>
+
+    <p class="sub">
+      Complete eligible game offers and other tasks,
+      build your balance, and request rewards from your
+      GameEarn account.
+    </p>
+
+  </section>
+
+
+  <section class="cards">
+
+    <div class="card">
+      <div>🎮</div>
+
+      <h3>
+        Game rewards
+      </h3>
+
+      <p>
+        Complete supported game milestones and earn
+        when the task is completed.
+      </p>
+    </div>
+
+
+    <div class="card">
+      <div>✓</div>
+
+      <h3>
+        Qualifying tasks
+      </h3>
+
+      <p>
+        Choose available offers and follow their
+        requirements to receive rewards.
+      </p>
+    </div>
+
+
+    <div class="card">
+      <div>💳</div>
+
+      <h3>
+        Withdraw
+      </h3>
+
+      <p>
+        Build your balance and request an available
+        withdrawal method.
+      </p>
+    </div>
+
+  </section>
+
+
+  <section class="auth" id="auth">
+
+
+    <!-- REGISTER -->
+
+    <div class="authcard">
+
+      <div class="eyebrow">
+        NEW HERE?
+      </div>
+
+      <h2>
+        Create account
+      </h2>
+
+      <div class="hint">
+        Use an email address you can access.
+        You must verify it before signing in.
+      </div>
+
+
+      <form id="registerForm">
+
+        <input
+          id="regUsername"
+          placeholder="Username"
+          autocomplete="username"
+          required
+        >
+
+        <input
+          id="regEmail"
+          type="email"
+          placeholder="Email address"
+          autocomplete="email"
+          required
+        >
+
+        <input
+          id="regPassword"
+          type="password"
+          placeholder="Password (6+ characters)"
+          minlength="6"
+          autocomplete="new-password"
+          required
+        >
+
+        <button type="submit">
+          Create account
+        </button>
+
+      </form>
+
+
+      <div id="registerMsg" class="msg"></div>
+
+    </div>
+
+
+
+    <!-- LOGIN -->
+
+    <div class="authcard">
+
+      <div class="eyebrow">
+        WELCOME BACK
+      </div>
+
+      <h2>
+        Sign in
+      </h2>
+
+      <div class="hint">
+        Use the exact email and password you used
+        to register.
+      </div>
+
+
+      <form id="loginForm">
+
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="Email address"
+          autocomplete="email"
+          required
+        >
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button type="submit">
+          Sign in
+        </button>
+
+      </form>
+
+
+      <div id="loginMsg" class="msg"></div>
+
+
+      <button
+        id="resendBtn"
+        class="secondary"
+        type="button"
+      >
+        Resend verification email
+      </button>
+
+
+      <div class="small">
+        If you registered but cannot sign in,
+        check your verification email.
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+
+function msg(element, text, className = "") {
+
+  element.textContent = text;
+
+  element.className = "msg " + className;
+
+}
+
+
+/* REGISTER */
+
+$("registerForm").onsubmit = async function(e) {
+
+  e.preventDefault();
+
+  msg(
+    $("registerMsg"),
+    "Creating your account..."
+  );
+
+
+  try {
+
+    const response = await fetch(
+      "/api/register",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          username:
+            $("regUsername").value.trim(),
+
+          email:
+            $("regEmail").value.trim(),
+
+          password:
+            $("regPassword").value
+
+        })
+      }
+    );
+
+
+    const data =
+      await response.json().catch(() => ({}));
+
+
+    if (!response.ok) {
+
+      msg(
+        $("registerMsg"),
+        data.error || "Registration failed.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    msg(
+      $("registerMsg"),
+      data.message ||
+      "Account created. Check your email.",
+      "success"
+    );
+
+
+    $("loginEmail").value =
+      $("regEmail").value.trim();
+
+    $("regPassword").value = "";
+
+  }
+
+  catch(error) {
+
+    msg(
+      $("registerMsg"),
+      "Could not connect to GameEarn.",
+      "error"
+    );
+
+  }
+
+};
+
+
+
+/* LOGIN */
+
+$("loginForm").onsubmit = async function(e) {
+
+  e.preventDefault();
+
+
+  $("resendBtn").style.display = "none";
+
+
+  msg(
+    $("loginMsg"),
+    "Signing in..."
+  );
+
+
+  try {
+
+    const response = await fetch(
+      "/api/login",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          email:
+            $("loginEmail").value.trim(),
+
+          password:
+            $("loginPassword").value
+
+        })
+      }
+    );
+
+
+    const data =
+      await response.json().catch(() => ({}));
+
+
+    if (!response.ok) {
+
+      msg(
+        $("loginMsg"),
+        data.error ||
+        "Invalid email or password.",
+        "error"
+      );
+
+
+      if (response.status === 403) {
+
+        $("resendBtn").style.display =
+          "inline-block";
+
+      }
+
+      return;
+    }
+
+
+    msg(
+      $("loginMsg"),
+      "Signed in. Opening dashboard...",
+      "success"
+    );
+
+
+    setTimeout(
+      () => {
+        location.href = "/dashboard.html";
+      },
+      500
+    );
+
+  }
+
+  catch(error) {
+
+    msg(
+      $("loginMsg"),
+      "Could not connect to GameEarn.",
+      "error"
+    );
+
+  }
+
+};
+
+
+
+/* RESEND VERIFICATION */
+
+$("resendBtn").onclick = async function() {
+
+  const email =
+    $("loginEmail").value.trim();
+
+
+  if (!email) {
+
+    msg(
+      $("loginMsg"),
+      "Enter your email first.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  msg(
+    $("loginMsg"),
+    "Sending verification email..."
+  );
+
+
+  try {
+
+    const response = await fetch(
+      "/api/resend-verification",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          email: email
+        })
+      }
+    );
+
+
+    const data =
+      await response.json().catch(() => ({}));
+
+
+    msg(
+      $("loginMsg"),
+      data.error ||
+      data.message ||
+      "Done.",
+      response.ok
+        ? "success"
+        : "error"
+    );
+
+  }
+
+  catch(error) {
+
+    msg(
+      $("loginMsg"),
+      "Could not send the verification email.",
+      "error"
+    );
+
+  }
+
+};
+
+</script>
+
+</body>
+</html>
