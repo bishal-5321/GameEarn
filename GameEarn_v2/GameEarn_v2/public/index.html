@@ -1,195 +1,317 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>GameEarn</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>GameEarn — Earn Rewards</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      background: #06101f;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: "Inter", sans-serif;
+      background: #07111f;
+      color: #f4f7ff;
+      min-height: 100vh;
     }
 
-    .wrap {
-      max-width: 1200px;
-      margin: auto;
-      padding: 28px 22px 70px;
+    a {
+      text-decoration: none;
+      color: inherit;
     }
 
-    .nav {
+    /* NAVBAR */
+
+    header {
+      height: 76px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding-bottom: 35px;
+      justify-content: space-between;
+      padding: 0 7%;
+      background: rgba(7,17,31,.92);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
     }
 
-    .brand {
-      font-size: 26px;
+    .logo {
+      font-size: 27px;
       font-weight: 800;
+      letter-spacing: -1px;
     }
 
-    .brand span {
-      color: #5b8cff;
+    .logo span {
+      color: #4d82ff;
     }
 
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 14px 20px;
-      background: #4e82ff;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
     }
 
-    .nav button {
-      background: #14233a;
-      border: 1px solid #29405f;
+    nav a {
+      color: #aebbd1;
+      font-size: 14px;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    nav a:hover {
+      color: white;
+    }
+
+    .nav-login {
+      background: #477cff;
+      color: white !important;
+      padding: 11px 19px;
+      border-radius: 10px;
+    }
+
+    /* HERO */
+
+    main {
+      max-width: 1250px;
+      margin: auto;
+      padding: 70px 25px 100px;
     }
 
     .hero {
       text-align: center;
-      padding: 40px 0 55px;
+      max-width: 850px;
+      margin: 25px auto 65px;
     }
 
-    .tag {
-      color: #70a0ff;
-      font-size: 13px;
+    .badge {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 999px;
+      background: rgba(73,124,255,.12);
+      border: 1px solid rgba(73,124,255,.25);
+      color: #72a0ff;
+      font-size: 12px;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
+      margin-bottom: 22px;
     }
 
     h1 {
-      font-size: 52px;
-      line-height: 1.05;
-      max-width: 800px;
-      margin: 14px auto 18px;
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: 1.03;
+      letter-spacing: -3px;
+      margin-bottom: 24px;
     }
 
-    .sub,
-    .hint {
-      color: #91a4c0;
-      line-height: 1.6;
+    h1 span {
+      color: #5b88ff;
     }
 
-    .sub {
+    .hero p {
+      color: #94a5bd;
       font-size: 18px;
-      max-width: 700px;
+      line-height: 1.7;
+      max-width: 680px;
       margin: auto;
     }
 
-    .cards {
+    /* FEATURE CARDS */
+
+    .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-      margin-bottom: 42px;
+      gap: 18px;
+      margin-bottom: 55px;
     }
 
-    .card,
-    .authcard {
-      background: #0d1b2e;
-      border: 1px solid #203754;
-      border-radius: 22px;
-    }
-
-    .card {
+    .feature {
+      background: #0d1a2d;
+      border: 1px solid #1c304b;
+      border-radius: 18px;
       padding: 27px;
+      min-height: 170px;
     }
 
-    .card h3 {
-      font-size: 21px;
+    .feature-icon {
+      font-size: 27px;
+      margin-bottom: 18px;
     }
 
-    .card p {
-      color: #8fa2bd;
-      line-height: 1.55;
+    .feature h3 {
+      font-size: 18px;
+      margin-bottom: 9px;
+    }
+
+    .feature p {
+      color: #8294ae;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* AUTH */
+
+    .auth-title {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .auth-title h2 {
+      font-size: 29px;
+      margin-bottom: 8px;
+    }
+
+    .auth-title p {
+      color: #8294ae;
+      font-size: 14px;
     }
 
     .auth {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 22px;
+      max-width: 950px;
+      margin: auto;
     }
 
-    .authcard {
+    .card {
+      background: #0d1a2d;
+      border: 1px solid #1c304b;
+      border-radius: 20px;
       padding: 32px;
+      box-shadow: 0 15px 50px rgba(0,0,0,.18);
     }
 
-    .eyebrow {
-      color: #70a0ff;
-      font-size: 13px;
+    .card small {
+      color: #5d8aff;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
     }
 
-    h2 {
-      font-size: 30px;
-      margin: 12px 0;
+    .card h2 {
+      margin: 10px 0 7px;
+      font-size: 26px;
     }
 
-    .hint {
-      margin-bottom: 24px;
+    .card-description {
+      color: #8193ad;
+      font-size: 13px;
+      margin-bottom: 23px;
     }
 
     input {
       width: 100%;
-      padding: 15px 16px;
+      height: 53px;
+      background: #081525;
+      border: 1px solid #263c58;
+      border-radius: 11px;
+      color: white;
+      padding: 0 16px;
       margin-bottom: 13px;
-      border: 1px solid #294362;
-      border-radius: 13px;
-      background: #081526;
-      color: #fff;
-      font-size: 16px;
+      outline: none;
+      font-size: 14px;
+      transition: .2s;
     }
 
     input:focus {
-      outline: none;
-      border-color: #5b8cff;
+      border-color: #5685ff;
+      box-shadow: 0 0 0 3px rgba(86,133,255,.1);
     }
 
-    .msg {
-      min-height: 25px;
+    input::placeholder {
+      color: #63758e;
+    }
+
+    button {
+      width: 100%;
+      height: 53px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(135deg,#477cff,#6653f5);
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s;
+      margin-top: 4px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .message {
+      min-height: 20px;
       margin-top: 14px;
-      line-height: 1.45;
-      color: #a8b9d0;
-    }
-
-    .success {
-      color: #65d69b;
-    }
-
-    .error {
-      color: #ff8585;
-    }
-
-    .secondary {
-      background: #172942;
-      margin-top: 10px;
-      display: none;
-    }
-
-    .small {
       font-size: 13px;
-      color: #7186a4;
-      margin-top: 18px;
+      color: #ff8080;
     }
 
-    @media (max-width: 800px) {
-      h1 {
-        font-size: 39px;
+    .security {
+      text-align: center;
+      color: #62758f;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,.07);
+      text-align: center;
+      padding: 28px;
+      color: #61738c;
+      font-size: 12px;
+    }
+
+    /* MOBILE */
+
+    @media(max-width: 800px) {
+
+      header {
+        padding: 0 20px;
       }
 
-      .cards,
+      nav {
+        gap: 14px;
+      }
+
+      nav a:not(.nav-login) {
+        display: none;
+      }
+
+      main {
+        padding: 45px 17px 70px;
+      }
+
+      .hero {
+        margin-bottom: 45px;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
       .auth {
         grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 24px;
       }
     }
   </style>
@@ -197,475 +319,288 @@
 
 <body>
 
-<div class="wrap">
+<header>
 
-  <nav class="nav">
-    <div class="brand">
-      Game<span>Earn</span>
-    </div>
+  <a href="/" class="logo">
+    GAME<span>EARN</span>
+  </a>
 
-    <button onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">
-      Get started
-    </button>
+  <nav>
+    <a href="#features">How it works</a>
+    <a href="#register">Register</a>
+    <a href="#login" class="nav-login">Sign in</a>
   </nav>
 
+</header>
+
+
+<main>
+
+  <!-- HERO -->
 
   <section class="hero">
 
-    <div class="tag">
-      PLAY • COMPLETE • EARN
+    <div class="badge">
+      EARN • PLAY • REDEEM
     </div>
 
     <h1>
-      Turn your gaming time into rewards.
+      Turn your gaming time into <span>real rewards.</span>
     </h1>
 
-    <p class="sub">
-      Complete eligible game offers and other tasks,
-      build your balance, and request rewards from your
-      GameEarn account.
+    <p>
+      Complete games, offers and tasks, build your balance,
+      and redeem your rewards when you reach the minimum.
     </p>
 
   </section>
 
 
-  <section class="cards">
+  <!-- FEATURES -->
 
-    <div class="card">
-      <div>🎮</div>
+  <section class="features" id="features">
 
-      <h3>
-        Game rewards
-      </h3>
+    <div class="feature">
+
+      <div class="feature-icon">🎮</div>
+
+      <h3>Play & Earn</h3>
 
       <p>
-        Complete supported game milestones and earn
-        when the task is completed.
+        Complete game offers and reach the required milestones
+        to earn rewards.
       </p>
+
     </div>
 
 
-    <div class="card">
-      <div>✓</div>
+    <div class="feature">
 
-      <h3>
-        Qualifying tasks
-      </h3>
+      <div class="feature-icon">💳</div>
+
+      <h3>Easy Redeem</h3>
 
       <p>
-        Choose available offers and follow their
-        requirements to receive rewards.
+        Choose an available reward and submit your payment
+        details when you're ready.
       </p>
+
     </div>
 
 
-    <div class="card">
-      <div>💳</div>
+    <div class="feature">
 
-      <h3>
-        Withdraw
-      </h3>
+      <div class="feature-icon">👥</div>
+
+      <h3>Refer Friends</h3>
 
       <p>
-        Build your balance and request an available
-        withdrawal method.
+        Invite friends and earn additional rewards through
+        the referral program.
       </p>
+
     </div>
 
   </section>
 
 
-  <section class="auth" id="auth">
+  <!-- AUTH TITLE -->
 
+  <div class="auth-title">
+
+    <h2>Start earning today</h2>
+
+    <p>
+      Create your account or sign in to continue.
+    </p>
+
+  </div>
+
+
+  <!-- AUTH -->
+
+  <section class="auth">
 
     <!-- REGISTER -->
 
-    <div class="authcard">
+    <form class="card" id="register">
 
-      <div class="eyebrow">
-        NEW HERE?
-      </div>
+      <small>NEW HERE?</small>
 
-      <h2>
+      <h2>Create account</h2>
+
+      <p class="card-description">
+        Use a real email address. You'll need access to it
+        for account verification.
+      </p>
+
+      <input
+        name="username"
+        placeholder="Username"
+        autocomplete="username"
+        required
+      >
+
+      <input
+        name="email"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="new-password"
+        required
+      >
+
+      <button type="submit">
         Create account
-      </h2>
+      </button>
 
-      <div class="hint">
-        Use an email address you can access.
-        You must verify it before signing in.
-      </div>
+      <p class="message" id="rm"></p>
 
-
-      <form id="registerForm">
-
-        <input
-          id="regUsername"
-          placeholder="Username"
-          autocomplete="username"
-          required
-        >
-
-        <input
-          id="regEmail"
-          type="email"
-          placeholder="Email address"
-          autocomplete="email"
-          required
-        >
-
-        <input
-          id="regPassword"
-          type="password"
-          placeholder="Password (6+ characters)"
-          minlength="6"
-          autocomplete="new-password"
-          required
-        >
-
-        <button type="submit">
-          Create account
-        </button>
-
-      </form>
-
-
-      <div id="registerMsg" class="msg"></div>
-
-    </div>
-
+    </form>
 
 
     <!-- LOGIN -->
 
-    <div class="authcard">
+    <form class="card" id="login">
 
-      <div class="eyebrow">
-        WELCOME BACK
-      </div>
+      <small>WELCOME BACK</small>
 
-      <h2>
-        Sign in
-      </h2>
+      <h2>Sign in</h2>
 
-      <div class="hint">
-        Use the exact email and password you used
-        to register.
-      </div>
+      <p class="card-description">
+        Sign in to access your GameEarn dashboard.
+      </p>
 
-
-      <form id="loginForm">
-
-        <input
-          id="loginEmail"
-          type="email"
-          placeholder="Email address"
-          autocomplete="email"
-          required
-        >
-
-        <input
-          id="loginPassword"
-          type="password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-        >
-
-        <button type="submit">
-          Sign in
-        </button>
-
-      </form>
-
-
-      <div id="loginMsg" class="msg"></div>
-
-
-      <button
-        id="resendBtn"
-        class="secondary"
-        type="button"
+      <input
+        name="email"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
       >
-        Resend verification email
+
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit">
+        Sign in
       </button>
 
+      <p class="message" id="lm"></p>
 
-      <div class="small">
-        If you registered but cannot sign in,
-        check your verification email.
-      </div>
-
-    </div>
+    </form>
 
   </section>
 
-</div>
+
+  <div class="security">
+    🔒 Your account information is protected.
+  </div>
+
+</main>
+
+
+<footer>
+  © 2026 GameEarn. Earn rewards. Play more.
+</footer>
 
 
 <script>
 
-const $ = id => document.getElementById(id);
+async function post(url, data) {
 
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
 
-function msg(element, text, className = "") {
+  let result;
 
-  element.textContent = text;
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error("Server returned an invalid response.");
+  }
 
-  element.className = "msg " + className;
+  if (!response.ok) {
+    throw new Error(result.error || "Something went wrong.");
+  }
 
+  return result;
 }
 
 
 /* REGISTER */
 
-$("registerForm").onsubmit = async function(e) {
+document.getElementById("register").addEventListener("submit", async function(e) {
 
   e.preventDefault();
 
-  msg(
-    $("registerMsg"),
-    "Creating your account..."
-  );
+  const message = document.getElementById("rm");
 
+  message.textContent = "";
+
+  const formData = Object.fromEntries(
+    new FormData(this)
+  );
 
   try {
 
-    const response = await fetch(
-      "/api/register",
-      {
-        method: "POST",
+    await post("/api/register", formData);
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+    window.location.href = "/dashboard.html";
 
-        body: JSON.stringify({
+  } catch(error) {
 
-          username:
-            $("regUsername").value.trim(),
-
-          email:
-            $("regEmail").value.trim(),
-
-          password:
-            $("regPassword").value
-
-        })
-      }
-    );
-
-
-    const data =
-      await response.json().catch(() => ({}));
-
-
-    if (!response.ok) {
-
-      msg(
-        $("registerMsg"),
-        data.error || "Registration failed.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    msg(
-      $("registerMsg"),
-      data.message ||
-      "Account created. Check your email.",
-      "success"
-    );
-
-
-    $("loginEmail").value =
-      $("regEmail").value.trim();
-
-    $("regPassword").value = "";
+    message.textContent = error.message;
 
   }
 
-  catch(error) {
-
-    msg(
-      $("registerMsg"),
-      "Could not connect to GameEarn.",
-      "error"
-    );
-
-  }
-
-};
-
+});
 
 
 /* LOGIN */
 
-$("loginForm").onsubmit = async function(e) {
+document.getElementById("login").addEventListener("submit", async function(e) {
 
   e.preventDefault();
 
+  const message = document.getElementById("lm");
 
-  $("resendBtn").style.display = "none";
+  message.textContent = "";
 
-
-  msg(
-    $("loginMsg"),
-    "Signing in..."
+  const formData = Object.fromEntries(
+    new FormData(this)
   );
-
 
   try {
 
-    const response = await fetch(
-      "/api/login",
-      {
-        method: "POST",
+    await post("/api/login", formData);
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+    window.location.href = "/dashboard.html";
 
-        body: JSON.stringify({
+  } catch(error) {
 
-          email:
-            $("loginEmail").value.trim(),
-
-          password:
-            $("loginPassword").value
-
-        })
-      }
-    );
-
-
-    const data =
-      await response.json().catch(() => ({}));
-
-
-    if (!response.ok) {
-
-      msg(
-        $("loginMsg"),
-        data.error ||
-        "Invalid email or password.",
-        "error"
-      );
-
-
-      if (response.status === 403) {
-
-        $("resendBtn").style.display =
-          "inline-block";
-
-      }
-
-      return;
-    }
-
-
-    msg(
-      $("loginMsg"),
-      "Signed in. Opening dashboard...",
-      "success"
-    );
-
-
-    setTimeout(
-      () => {
-        location.href = "/dashboard.html";
-      },
-      500
-    );
+    message.textContent = error.message;
 
   }
 
-  catch(error) {
-
-    msg(
-      $("loginMsg"),
-      "Could not connect to GameEarn.",
-      "error"
-    );
-
-  }
-
-};
-
-
-
-/* RESEND VERIFICATION */
-
-$("resendBtn").onclick = async function() {
-
-  const email =
-    $("loginEmail").value.trim();
-
-
-  if (!email) {
-
-    msg(
-      $("loginMsg"),
-      "Enter your email first.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  msg(
-    $("loginMsg"),
-    "Sending verification email..."
-  );
-
-
-  try {
-
-    const response = await fetch(
-      "/api/resend-verification",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          email: email
-        })
-      }
-    );
-
-
-    const data =
-      await response.json().catch(() => ({}));
-
-
-    msg(
-      $("loginMsg"),
-      data.error ||
-      data.message ||
-      "Done.",
-      response.ok
-        ? "success"
-        : "error"
-    );
-
-  }
-
-  catch(error) {
-
-    msg(
-      $("loginMsg"),
-      "Could not send the verification email.",
-      "error"
-    );
-
-  }
-
-};
+});
 
 </script>
 
