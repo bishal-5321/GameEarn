@@ -1,496 +1,2368 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GameEarn - Redeem</title>
+  <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="/style.css">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-    <style>
-        .reward-section {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+  <title>GameEarn - Payout</title>
 
-        .reward-title {
-            font-size: 38px;
-            margin-bottom: 8px;
-        }
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 
-        .reward-subtitle {
-            color: #8fa9d6;
-            font-size: 18px;
-            margin-bottom: 35px;
-        }
+  <style>
 
-        .steam-card {
-            background: #0f1d30;
-            border: 1px solid #263b59;
-            border-radius: 18px;
-            padding: 30px;
-        }
+    /* =========================================
+       PAYOUT PAGE
+    ========================================= */
 
-        .steam-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
+    .payout-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 45px 28px 80px;
+    }
 
-        .steam-header h2 {
-            margin: 0;
-            font-size: 28px;
-        }
 
-        .steam-description {
-            color: #8fa9d6;
-            margin-bottom: 30px;
-        }
+    .payout-header {
+      margin-bottom: 30px;
+    }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-        }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+    .payout-header small {
+      color: #6ea0ff;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
 
-        .form-group label {
-            font-weight: 700;
-            margin-bottom: 9px;
-        }
+    .payout-header h1 {
+      margin: 8px 0 8px;
+      font-size: 42px;
+    }
 
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            box-sizing: border-box;
-            background: #091626;
-            border: 1px solid #29405f;
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
 
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #4d7cff;
-        }
+    .payout-header p {
+      color: #8fa4c2;
+      font-size: 16px;
+      margin: 0;
+    }
 
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
 
-        .fixed-payout {
-            background: #172b48;
-            border: 1px solid #35547d;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 20px;
-            font-weight: 800;
-            color: white;
-        }
+    /* =========================================
+       BALANCE
+    ========================================= */
 
-        .fixed-payout small {
-            display: block;
-            color: #8fa9d6;
-            font-size: 13px;
-            margin-top: 4px;
-            font-weight: 400;
-        }
+    .balance-card {
+      background:
+        linear-gradient(
+          135deg,
+          #152b4a,
+          #101d32
+        );
 
-        .confirmation {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-top: 25px;
-            color: #d7e2f4;
-        }
+      border: 1px solid #27466f;
 
-        .confirmation input {
-            width: 20px;
-            height: 20px;
-            margin-top: 2px;
-            accent-color: #4d7cff;
-        }
+      border-radius: 18px;
 
-        .submit-btn {
-            margin-top: 25px;
-            background: #4d7cff;
-            border: none;
-            color: white;
-            padding: 15px 28px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-        }
+      padding: 24px 28px;
 
-        .submit-btn:hover {
-            background: #3e6df0;
-        }
+      margin-bottom: 28px;
 
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+      display: flex;
 
-        #withdrawMsg {
-            margin-top: 18px;
-            color: #8fa9d6;
-            font-weight: 600;
-        }
+      justify-content: space-between;
 
-        @media (max-width: 700px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+      align-items: center;
 
-            .form-group.full {
-                grid-column: auto;
-            }
+      gap: 20px;
+    }
 
-            .reward-title {
-                font-size: 30px;
-            }
-        }
-    </style>
+
+    .balance-card small {
+      color: #7fa8e8;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+
+    .balance-card strong {
+      display: block;
+
+      font-size: 34px;
+
+      margin-top: 5px;
+
+      color: white;
+    }
+
+
+    .balance-icon {
+      width: 58px;
+      height: 58px;
+
+      border-radius: 16px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 27px;
+
+      background: #203b61;
+    }
+
+
+    /* =========================================
+       METHOD SELECTOR
+    ========================================= */
+
+    .method-title {
+      margin-bottom: 15px;
+    }
+
+
+    .method-title h2 {
+      margin: 0 0 5px;
+    }
+
+
+    .method-title p {
+      margin: 0;
+      color: #8297b5;
+    }
+
+
+    .method-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 14px;
+
+      margin-bottom: 25px;
+    }
+
+
+    .method-card {
+
+      border: 1px solid #29415f;
+
+      background: #0f1d30;
+
+      border-radius: 16px;
+
+      padding: 22px 18px;
+
+      cursor: pointer;
+
+      transition:
+        .2s ease;
+
+      color: white;
+    }
+
+
+    .method-card:hover {
+
+      border-color: #4d82ff;
+
+      transform: translateY(-2px);
+
+    }
+
+
+    .method-card.active {
+
+      border: 2px solid #2878ff;
+
+      background:
+        linear-gradient(
+          145deg,
+          #132b4d,
+          #101d32
+        );
+
+      box-shadow:
+        0 0 0 3px
+        rgba(40,120,255,.10);
+    }
+
+
+    .method-icon {
+
+      font-size: 30px;
+
+      margin-bottom: 12px;
+    }
+
+
+    .method-card h3 {
+
+      margin: 0 0 5px;
+
+      font-size: 18px;
+    }
+
+
+    .method-card p {
+
+      margin: 0;
+
+      color: #7f96b7;
+
+      font-size: 13px;
+
+      line-height: 1.4;
+    }
+
+
+    /* =========================================
+       FORM
+    ========================================= */
+
+    .payout-form {
+
+      background: #0e1b2d;
+
+      border: 1px solid #233c5c;
+
+      border-radius: 20px;
+
+      padding: 30px;
+
+    }
+
+
+    .form-header {
+
+      margin-bottom: 28px;
+
+      padding-bottom: 20px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,.07);
+    }
+
+
+    .form-header h2 {
+
+      margin: 0 0 7px;
+
+      font-size: 27px;
+    }
+
+
+    .form-header p {
+
+      margin: 0;
+
+      color: #8197b7;
+    }
+
+
+    .form-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 20px;
+    }
+
+
+    .field {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 8px;
+    }
+
+
+    .field.full {
+
+      grid-column:
+        1 / -1;
+    }
+
+
+    .field label {
+
+      font-weight: 700;
+
+      font-size: 14px;
+
+      color: #dce7f8;
+    }
+
+
+    .field input,
+    .field select,
+    .field textarea {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+      background: #091525;
+
+      border: 1px solid #294361;
+
+      color: white;
+
+      border-radius: 12px;
+
+      padding: 14px 15px;
+
+      font-size: 15px;
+
+      outline: none;
+
+      transition: .2s ease;
+    }
+
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+
+      border-color: #4385ff;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(67,133,255,.10);
+    }
+
+
+    .field textarea {
+
+      min-height: 125px;
+
+      resize: vertical;
+    }
+
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+
+      color: #607692;
+    }
+
+
+    /* =========================================
+       FIXED AMOUNT
+    ========================================= */
+
+    .fixed-amount {
+
+      background:
+        linear-gradient(
+          135deg,
+          #162f51,
+          #12233b
+        );
+
+      border: 1px solid #31557f;
+
+      border-radius: 14px;
+
+      padding: 18px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      min-height: 72px;
+
+      box-sizing: border-box;
+    }
+
+
+    .fixed-amount .amount {
+
+      font-size: 25px;
+
+      font-weight: 900;
+
+      color: white;
+    }
+
+
+    .fixed-amount .label {
+
+      color: #82a6d8;
+
+      font-size: 12px;
+
+      margin-top: 3px;
+
+      font-family: monospace;
+
+      letter-spacing: 1px;
+    }
+
+
+    /* =========================================
+       CHECKBOX
+    ========================================= */
+
+    .confirm {
+
+      margin-top: 22px;
+
+      display: flex;
+
+      align-items: flex-start;
+
+      gap: 11px;
+
+      color: #b6c5d9;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+    }
+
+
+    .confirm input {
+
+      width: 18px;
+
+      height: 18px;
+
+      margin-top: 2px;
+
+      accent-color: #4385ff;
+
+      flex-shrink: 0;
+    }
+
+
+    /* =========================================
+       SUBMIT
+    ========================================= */
+
+    .submit-area {
+
+      margin-top: 26px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 18px;
+
+      flex-wrap: wrap;
+    }
+
+
+    .submit-button {
+
+      border: none;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #3978ff,
+          #5960f5
+        );
+
+      color: white;
+
+      padding: 14px 24px;
+
+      font-size: 16px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition: .2s ease;
+    }
+
+
+    .submit-button:hover {
+
+      transform: translateY(-1px);
+
+      box-shadow:
+        0 8px 25px
+        rgba(50,100,255,.25);
+    }
+
+
+    .submit-button:disabled {
+
+      opacity: .5;
+
+      cursor: not-allowed;
+
+      transform: none;
+
+      box-shadow: none;
+    }
+
+
+    .amount-note {
+
+      color: #7890b0;
+
+      font-size: 13px;
+    }
+
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    #withdrawMsg {
+
+      margin-top: 20px;
+
+      padding: 13px 15px;
+
+      border-radius: 10px;
+
+      display: none;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+    }
+
+
+    #withdrawMsg.success {
+
+      display: block;
+
+      background:
+        rgba(35,180,110,.10);
+
+      border:
+        1px solid
+        rgba(35,180,110,.30);
+
+      color: #6de0a5;
+    }
+
+
+    #withdrawMsg.error {
+
+      display: block;
+
+      background:
+        rgba(240,70,70,.10);
+
+      border:
+        1px solid
+        rgba(240,70,70,.30);
+
+      color: #ff9696;
+    }
+
+
+    /* =========================================
+       HIDDEN
+    ========================================= */
+
+    .hidden {
+      display: none !important;
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media(max-width: 850px) {
+
+      .method-grid {
+
+        grid-template-columns:
+          1fr 1fr;
+
+      }
+
+      .form-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+      .field.full {
+
+        grid-column:
+          auto;
+      }
+
+    }
+
+
+    @media(max-width: 550px) {
+
+      .payout-page {
+
+        padding:
+          30px 16px 60px;
+
+      }
+
+
+      .payout-header h1 {
+
+        font-size: 32px;
+
+      }
+
+
+      .method-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .balance-card {
+
+        padding: 20px;
+
+      }
+
+
+      .payout-form {
+
+        padding: 20px;
+
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-    <a class="brand" href="/dashboard.html">
-        GAME<span>EARN</span>
+
+  <a
+    class="brand"
+    href="/dashboard.html"
+  >
+    GAME<span>EARN</span>
+  </a>
+
+  <nav>
+
+    <a href="/dashboard.html">
+      Dashboard
     </a>
 
-    <nav>
-        <a href="/dashboard.html">Dashboard</a>
-        <a href="/offers.html">Earn</a>
-    </nav>
+    <a href="/offers.html">
+      Earn
+    </a>
+
+    <a href="/referrals.html">
+      Referrals
+    </a>
+
+    <button
+      id="logoutBtn"
+      class="link"
+      type="button"
+    >
+      Log out
+    </button>
+
+  </nav>
+
 </header>
 
 
-<main class="reward-section">
+<main class="payout-page">
 
-    <h1 class="reward-title">
-        Choose your reward.
+
+  <!-- =====================================
+       HEADER
+  ====================================== -->
+
+  <section class="payout-header">
+
+    <small>
+      PAYOUT CENTER
+    </small>
+
+    <h1>
+      Choose your payout.
     </h1>
 
-    <p class="reward-subtitle">
-        Select the reward you want and submit your request.
+    <p>
+      Select how you'd like to receive your reward.
     </p>
 
+  </section>
 
-    <section class="steam-card">
 
-        <div class="steam-header">
-            <span style="font-size:30px;">🎮</span>
+  <!-- =====================================
+       BALANCE
+  ====================================== -->
 
-            <h2>
-                Steam Account Reward
-            </h2>
+  <section class="balance-card">
+
+    <div>
+
+      <small>
+        AVAILABLE BALANCE
+      </small>
+
+      <strong>
+        $<span id="balance">
+          0.00
+        </span>
+      </strong>
+
+    </div>
+
+    <div class="balance-icon">
+      💰
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       METHOD SELECTOR
+  ====================================== -->
+
+  <section>
+
+    <div class="method-title">
+
+      <h2>
+        Payout method
+      </h2>
+
+      <p>
+        Choose one of the available payout options.
+      </p>
+
+    </div>
+
+
+    <div class="method-grid">
+
+
+      <!-- UPI -->
+
+      <div
+        class="method-card active"
+        data-method="upi"
+      >
+
+        <div class="method-icon">
+          🇮🇳
         </div>
 
-        <p class="steam-description">
-            Request a Steam account with the specific game you want.
+        <h3>
+          UPI
+        </h3>
+
+        <p>
+          Receive your payout through an Indian UPI ID.
         </p>
 
-
-        <div class="form-grid">
-
-            <!-- FIXED PAYOUT -->
-
-            <div class="form-group">
-
-                <label>
-                    Payout amount
-                </label>
-
-                <div class="fixed-payout">
-                    $1.00
-
-                    <small>
-                        Fixed reward amount
-                    </small>
-                </div>
-
-            </div>
+      </div>
 
 
-            <!-- GAME -->
+      <!-- PAYPAL -->
 
-            <div class="form-group">
+      <div
+        class="method-card"
+        data-method="paypal"
+      >
 
-                <label for="game">
-                    Specific game
-                </label>
+        <div class="method-icon">
+          🅿️
+        </div>
 
-                <input
-                    type="text"
-                    id="game"
-                    placeholder="Example: GTA V"
-                    required
-                >
+        <h3>
+          PayPal
+        </h3>
 
-            </div>
+        <p>
+          Receive your payout through PayPal.
+        </p>
 
-
-            <!-- EMAIL -->
-
-            <div class="form-group">
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Your email address"
-                    required
-                >
-
-            </div>
+      </div>
 
 
-            <!-- DISCORD -->
+      <!-- GIFT CARD -->
 
-            <div class="form-group">
+      <div
+        class="method-card"
+        data-method="gift_card"
+      >
 
-                <label for="discord">
-                    Discord username
-                </label>
+        <div class="method-icon">
+          🎁
+        </div>
 
-                <input
-                    type="text"
-                    id="discord"
-                    placeholder="@username"
-                    required
-                >
+        <h3>
+          Gift Card
+        </h3>
 
-            </div>
+        <p>
+          Request an available gift card reward.
+        </p>
+
+      </div>
 
 
-            <!-- ADDITIONAL DETAILS -->
+      <!-- STEAM -->
 
-            <div class="form-group full">
+      <div
+        class="method-card"
+        data-method="game_reward"
+      >
 
-                <label for="details">
-                    Additional details
-                </label>
+        <div class="method-icon">
+          🎮
+        </div>
 
-                <textarea
-                    id="details"
-                    placeholder="Anything else we should know..."
-                ></textarea>
+        <h3>
+          Steam Account
+        </h3>
 
-            </div>
+        <p>
+          Request a specific game for your Steam account.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       FORM
+  ====================================== -->
+
+  <section class="payout-form">
+
+
+    <!-- ===================================
+         UPI FORM
+    ==================================== -->
+
+    <div
+      id="upiForm"
+      class="payout-interface"
+    >
+
+      <div class="form-header">
+
+        <h2>
+          🇮🇳 UPI Payout
+        </h2>
+
+        <p>
+          Enter the UPI details where you want to receive your payout.
+        </p>
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="field">
+
+          <label>
+            Payout amount (USD)
+          </label>
+
+          <input
+            id="upiAmount"
+            type="number"
+            min="1"
+            step="0.01"
+            value="1.00"
+            placeholder="1.00"
+          >
 
         </div>
 
 
-        <!-- CONFIRMATION -->
+        <div class="field">
 
-        <label class="confirmation">
+          <label>
+            UPI ID
+          </label>
 
-            <input
-                type="checkbox"
-                id="confirm"
-            >
+          <input
+            id="upiId"
+            type="text"
+            placeholder="example@upi"
+            autocomplete="off"
+          >
 
-            <span>
-                I confirm that the information I provided is
-                correct and belongs to me.
-            </span>
-
-        </label>
+        </div>
 
 
-        <!-- SUBMIT -->
+        <div class="field">
+
+          <label>
+            Account holder name
+          </label>
+
+          <input
+            id="upiName"
+            type="text"
+            placeholder="Your full name"
+            autocomplete="name"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Additional details
+          </label>
+
+          <input
+            id="upiExtra"
+            type="text"
+            placeholder="Optional"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label class="confirm">
+
+        <input
+          id="upiConfirm"
+          type="checkbox"
+        >
+
+        <span>
+          I confirm that the UPI information I provided is correct.
+        </span>
+
+      </label>
+
+
+      <div class="submit-area">
 
         <button
-            class="submit-btn"
-            id="submitBtn"
-            onclick="submitSteamReward()"
+          class="submit-button"
+          type="button"
+          onclick="submitPayout('upi')"
         >
-            Submit request — $1.00
+          Submit UPI payout
         </button>
 
+        <span class="amount-note">
+          Minimum payout: $1.00
+        </span>
 
-        <div id="withdrawMsg"></div>
+      </div>
 
-    </section>
+    </div>
+
+
+    <!-- ===================================
+         PAYPAL FORM
+    ==================================== -->
+
+    <div
+      id="paypalForm"
+      class="payout-interface hidden"
+    >
+
+      <div class="form-header">
+
+        <h2>
+          🅿️ PayPal Payout
+        </h2>
+
+        <p>
+          Enter the PayPal account information for your payout.
+        </p>
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="field">
+
+          <label>
+            Payout amount (USD)
+          </label>
+
+          <input
+            id="paypalAmount"
+            type="number"
+            min="1"
+            step="0.01"
+            value="1.00"
+            placeholder="1.00"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            PayPal email
+          </label>
+
+          <input
+            id="paypalEmail"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            First and last name
+          </label>
+
+          <input
+            id="paypalName"
+            type="text"
+            placeholder="Your full name"
+            autocomplete="name"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Additional details
+          </label>
+
+          <input
+            id="paypalExtra"
+            type="text"
+            placeholder="Optional"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label class="confirm">
+
+        <input
+          id="paypalConfirm"
+          type="checkbox"
+        >
+
+        <span>
+          I confirm that the PayPal information I provided is correct.
+        </span>
+
+      </label>
+
+
+      <div class="submit-area">
+
+        <button
+          class="submit-button"
+          type="button"
+          onclick="submitPayout('paypal')"
+        >
+          Submit PayPal payout
+        </button>
+
+        <span class="amount-note">
+          Minimum payout: $1.00
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================
+         GIFT CARD FORM
+    ==================================== -->
+
+    <div
+      id="giftForm"
+      class="payout-interface hidden"
+    >
+
+      <div class="form-header">
+
+        <h2>
+          🎁 Gift Card Reward
+        </h2>
+
+        <p>
+          Choose the gift card you want and provide your delivery email.
+        </p>
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="field">
+
+          <label>
+            Payout amount (USD)
+          </label>
+
+          <input
+            id="giftAmount"
+            type="number"
+            min="1"
+            step="0.01"
+            value="1.00"
+            placeholder="1.00"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Gift card type
+          </label>
+
+          <select id="giftType">
+
+            <option value="">
+              Select gift card
+            </option>
+
+            <option value="Amazon">
+              Amazon
+            </option>
+
+            <option value="Google Play">
+              Google Play
+            </option>
+
+            <option value="Steam">
+              Steam
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Delivery email
+          </label>
+
+          <input
+            id="giftEmail"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Name
+          </label>
+
+          <input
+            id="giftName"
+            type="text"
+            placeholder="Your full name"
+          >
+
+        </div>
+
+
+        <div class="field full">
+
+          <label>
+            Additional details
+          </label>
+
+          <textarea
+            id="giftExtra"
+            placeholder="Anything we should know..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <label class="confirm">
+
+        <input
+          id="giftConfirm"
+          type="checkbox"
+        >
+
+        <span>
+          I confirm that the information I provided is correct.
+        </span>
+
+      </label>
+
+
+      <div class="submit-area">
+
+        <button
+          class="submit-button"
+          type="button"
+          onclick="submitPayout('gift_card')"
+        >
+          Submit gift card request
+        </button>
+
+        <span class="amount-note">
+          Minimum payout: $1.00
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================
+         STEAM FORM
+    ==================================== -->
+
+    <div
+      id="steamForm"
+      class="payout-interface hidden"
+    >
+
+      <div class="form-header">
+
+        <h2>
+          🎮 Steam Account Reward
+        </h2>
+
+        <p>
+          Request a specific game for your Steam account.
+        </p>
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <!-- FIXED $1 -->
+
+        <div class="field">
+
+          <label>
+            Payout amount
+          </label>
+
+          <div class="fixed-amount">
+
+            <div>
+
+              <div class="amount">
+                $1.00
+              </div>
+
+              <div class="label">
+                FIXED REWARD AMOUNT
+              </div>
+
+            </div>
+
+            <div>
+              🎮
+            </div>
+
+          </div>
+
+          <input
+            type="hidden"
+            id="steamAmount"
+            value="1.00"
+          >
+
+        </div>
+
+
+        <!-- SPECIFIC GAME -->
+
+        <div class="field">
+
+          <label for="steamGame">
+            Specific game
+          </label>
+
+          <input
+            id="steamGame"
+            type="text"
+            placeholder="e.g. GTA V, Minecraft, etc."
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="field">
+
+          <label for="steamEmail">
+            Email
+          </label>
+
+          <input
+            id="steamEmail"
+            type="email"
+            placeholder="Your email address"
+            autocomplete="email"
+          >
+
+        </div>
+
+
+        <!-- DISCORD -->
+
+        <div class="field">
+
+          <label for="steamDiscord">
+            Discord username
+          </label>
+
+          <input
+            id="steamDiscord"
+            type="text"
+            placeholder="@username"
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <!-- ADDITIONAL -->
+
+        <div class="field full">
+
+          <label for="steamExtra">
+            Additional details
+          </label>
+
+          <textarea
+            id="steamExtra"
+            placeholder="Anything else we should know about your game request..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <label class="confirm">
+
+        <input
+          id="steamConfirm"
+          type="checkbox"
+        >
+
+        <span>
+          I confirm that the information I provided is correct
+          and that this request is for my Steam account.
+        </span>
+
+      </label>
+
+
+      <div class="submit-area">
+
+        <button
+          class="submit-button"
+          type="button"
+          onclick="submitPayout('game_reward')"
+        >
+          Submit Steam request — $1.00
+        </button>
+
+        <span class="amount-note">
+          Steam Account reward is fixed at $1.00
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================
+         MESSAGE
+    ==================================== -->
+
+    <div id="withdrawMsg"></div>
+
+
+  </section>
 
 </main>
 
 
 <script>
 
-async function submitSteamReward() {
+  /* =========================================
+     GLOBAL
+  ========================================= */
 
-    const game =
-        document.getElementById("game").value.trim();
-
-    const email =
-        document.getElementById("email").value.trim();
-
-    const discord =
-        document.getElementById("discord").value.trim();
-
-    const details =
-        document.getElementById("details").value.trim();
-
-    const confirm =
-        document.getElementById("confirm").checked;
-
-    const button =
-        document.getElementById("submitBtn");
-
-    const message =
-        document.getElementById("withdrawMsg");
+  let currentUser = null;
 
 
-    if (!game) {
-        message.textContent =
-            "Please enter the game you want.";
-        return;
-    }
+  /* =========================================
+     GET USER
+  ========================================= */
 
-
-    if (!email) {
-        message.textContent =
-            "Please enter your email.";
-        return;
-    }
-
-
-    if (!discord) {
-        message.textContent =
-            "Please enter your Discord username.";
-        return;
-    }
-
-
-    if (!confirm) {
-        message.textContent =
-            "Please confirm that your information is correct.";
-        return;
-    }
-
-
-    /*
-        IMPORTANT:
-        The payout is ALWAYS $1.00.
-
-        The server currently calculates the withdrawal
-        amount from the user's coin balance, so we send
-        the reward information as the payment details.
-    */
-
-    const paymentDetails =
-        JSON.stringify({
-            rewardType: "Steam Account",
-            amountUSD: 1.00,
-            game: game,
-            email: email,
-            discord: discord,
-            additionalDetails: details
-        });
-
-
-    button.disabled = true;
-    button.textContent = "Submitting...";
-
+  async function loadUser() {
 
     try {
 
-        const response =
-            await fetch("/api/withdraw", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    telegramId:
-                        String(
-                            window.Telegram?.WebApp?.initDataUnsafe?.user?.id || ""
-                        ),
-
-                    method:
-                        "Steam Account",
-
-                    paymentDetails:
-                        paymentDetails
-
-                })
-
-            });
+      const response =
+        await fetch(
+          "/api/me"
+        );
 
 
-        const data =
-            await response.json();
+      if (!response.ok) {
+
+        window.location.href =
+          "/";
+
+        return;
+      }
 
 
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "Could not submit request."
-            );
-
-        }
+      const data =
+        await response.json();
 
 
-        message.textContent =
-            `Request #${data.withdrawalId} submitted successfully.`;
+      currentUser =
+        data.user;
 
 
-        button.textContent =
-            "Request submitted ✓";
+      const balance =
+        Number(
+          currentUser.balance_cents || 0
+        ) / 100;
 
 
-        document.getElementById("game").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("discord").value = "";
-        document.getElementById("details").value = "";
-        document.getElementById("confirm").checked = false;
+      document.getElementById(
+        "balance"
+      ).textContent =
+        balance.toFixed(2);
 
 
     } catch (error) {
 
-        console.error(error);
+      console.error(
+        "Could not load account:",
+        error
+      );
 
-        message.textContent =
-            error.message ||
-            "Something went wrong. Please try again.";
+      window.location.href =
+        "/";
 
-        button.disabled = false;
-
-        button.textContent =
-            "Submit request — $1.00";
     }
 
-}
+  }
+
+
+  /* =========================================
+     METHOD SWITCHING
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      ".method-card"
+    )
+    .forEach(card => {
+
+      card.addEventListener(
+        "click",
+        function() {
+
+          const method =
+            this.dataset.method;
+
+
+          document
+            .querySelectorAll(
+              ".method-card"
+            )
+            .forEach(
+              x =>
+                x.classList.remove(
+                  "active"
+                )
+            );
+
+
+          this.classList.add(
+            "active"
+          );
+
+
+          document
+            .querySelectorAll(
+              ".payout-interface"
+            )
+            .forEach(
+              x =>
+                x.classList.add(
+                  "hidden"
+                )
+            );
+
+
+          if (
+            method ===
+            "upi"
+          ) {
+
+            document
+              .getElementById(
+                "upiForm"
+              )
+              .classList.remove(
+                "hidden"
+              );
+
+          }
+
+
+          if (
+            method ===
+            "paypal"
+          ) {
+
+            document
+              .getElementById(
+                "paypalForm"
+              )
+              .classList.remove(
+                "hidden"
+              );
+
+          }
+
+
+          if (
+            method ===
+            "gift_card"
+          ) {
+
+            document
+              .getElementById(
+                "giftForm"
+              )
+              .classList.remove(
+                "hidden"
+              );
+
+          }
+
+
+          if (
+            method ===
+            "game_reward"
+          ) {
+
+            document
+              .getElementById(
+                "steamForm"
+              )
+              .classList.remove(
+                "hidden"
+              );
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =========================================
+     MESSAGE
+  ========================================= */
+
+  function showMessage(
+    message,
+    type
+  ) {
+
+    const box =
+      document.getElementById(
+        "withdrawMsg"
+      );
+
+
+    box.textContent =
+      message;
+
+
+    box.className =
+      type;
+
+
+    box.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+
+  }
+
+
+  /* =========================================
+     SUBMIT PAYOUT
+  ========================================= */
+
+  async function submitPayout(
+    method
+  ) {
+
+    let amount = 0;
+
+    let details = "";
+
+    let confirmed = false;
+
+
+    /* =======================================
+       UPI
+    ======================================== */
+
+    if (
+      method ===
+      "upi"
+    ) {
+
+      amount =
+        Number(
+          document.getElementById(
+            "upiAmount"
+          ).value
+        );
+
+
+      const upiId =
+        document.getElementById(
+          "upiId"
+        ).value.trim();
+
+
+      const name =
+        document.getElementById(
+          "upiName"
+        ).value.trim();
+
+
+      const extra =
+        document.getElementById(
+          "upiExtra"
+        ).value.trim();
+
+
+      confirmed =
+        document.getElementById(
+          "upiConfirm"
+        ).checked;
+
+
+      if (!upiId) {
+
+        showMessage(
+          "Please enter your UPI ID.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!name) {
+
+        showMessage(
+          "Please enter the account holder name.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      details =
+        "UPI ID: " +
+        upiId +
+        "\n" +
+        "Account holder: " +
+        name +
+        "\n" +
+        "Additional details: " +
+        (extra || "None");
+
+    }
+
+
+    /* =======================================
+       PAYPAL
+    ======================================== */
+
+    if (
+      method ===
+      "paypal"
+    ) {
+
+      amount =
+        Number(
+          document.getElementById(
+            "paypalAmount"
+          ).value
+        );
+
+
+      const email =
+        document.getElementById(
+          "paypalEmail"
+        ).value.trim();
+
+
+      const name =
+        document.getElementById(
+          "paypalName"
+        ).value.trim();
+
+
+      const extra =
+        document.getElementById(
+          "paypalExtra"
+        ).value.trim();
+
+
+      confirmed =
+        document.getElementById(
+          "paypalConfirm"
+        ).checked;
+
+
+      if (!email) {
+
+        showMessage(
+          "Please enter your PayPal email.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!name) {
+
+        showMessage(
+          "Please enter your first and last name.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      details =
+        "PayPal email: " +
+        email +
+        "\n" +
+        "Name: " +
+        name +
+        "\n" +
+        "Additional details: " +
+        (extra || "None");
+
+    }
+
+
+    /* =======================================
+       GIFT CARD
+    ======================================== */
+
+    if (
+      method ===
+      "gift_card"
+    ) {
+
+      amount =
+        Number(
+          document.getElementById(
+            "giftAmount"
+          ).value
+        );
+
+
+      const type =
+        document.getElementById(
+          "giftType"
+        ).value;
+
+
+      const email =
+        document.getElementById(
+          "giftEmail"
+        ).value.trim();
+
+
+      const name =
+        document.getElementById(
+          "giftName"
+        ).value.trim();
+
+
+      const extra =
+        document.getElementById(
+          "giftExtra"
+        ).value.trim();
+
+
+      confirmed =
+        document.getElementById(
+          "giftConfirm"
+        ).checked;
+
+
+      if (!type) {
+
+        showMessage(
+          "Please select a gift card type.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!email) {
+
+        showMessage(
+          "Please enter your delivery email.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!name) {
+
+        showMessage(
+          "Please enter your name.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      details =
+        "Gift card: " +
+        type +
+        "\n" +
+        "Delivery email: " +
+        email +
+        "\n" +
+        "Name: " +
+        name +
+        "\n" +
+        "Additional details: " +
+        (extra || "None");
+
+    }
+
+
+    /* =======================================
+       STEAM
+    ======================================== */
+
+    if (
+      method ===
+      "game_reward"
+    ) {
+
+      /* ALWAYS $1 */
+
+      amount =
+        1.00;
+
+
+      const game =
+        document.getElementById(
+          "steamGame"
+        ).value.trim();
+
+
+      const email =
+        document.getElementById(
+          "steamEmail"
+        ).value.trim();
+
+
+      const discord =
+        document.getElementById(
+          "steamDiscord"
+        ).value.trim();
+
+
+      const extra =
+        document.getElementById(
+          "steamExtra"
+        ).value.trim();
+
+
+      confirmed =
+        document.getElementById(
+          "steamConfirm"
+        ).checked;
+
+
+      if (!game) {
+
+        showMessage(
+          "Please enter the specific game you want.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!email) {
+
+        showMessage(
+          "Please enter your email.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!discord) {
+
+        showMessage(
+          "Please enter your Discord username.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      details =
+        "Specific game: " +
+        game +
+        "\n" +
+        "Email: " +
+        email +
+        "\n" +
+        "Discord username: " +
+        discord +
+        "\n" +
+        "Additional details: " +
+        (extra || "None");
+
+    }
+
+
+    /* =======================================
+       AMOUNT CHECK
+    ======================================== */
+
+    if (
+      !Number.isFinite(
+        amount
+      ) ||
+      amount < 1
+    ) {
+
+      showMessage(
+        "The minimum payout amount is $1.00.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /* =======================================
+       CONFIRM CHECK
+    ======================================== */
+
+    if (!confirmed) {
+
+      showMessage(
+        "Please confirm that the information you provided is correct.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /* =======================================
+       BALANCE CHECK
+    ======================================== */
+
+    const balance =
+      Number(
+        currentUser?.balance_cents || 0
+      ) / 100;
+
+
+    if (
+      balance <
+      amount
+    ) {
+
+      showMessage(
+        "You don't have enough balance for this payout.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /* =======================================
+       BUTTON
+    ======================================== */
+
+    const buttons =
+      document.querySelectorAll(
+        ".submit-button"
+      );
+
+
+    buttons.forEach(
+      button => {
+        button.disabled =
+          true;
+      }
+    );
+
+
+    showMessage(
+      "Submitting your payout request...",
+      "success"
+    );
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/withdraw",
+          {
+
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                amount_cents:
+                  Math.round(
+                    amount * 100
+                  ),
+
+                method:
+                  method,
+
+                details:
+                  details
+
+              })
+
+          }
+        );
+
+
+      let data;
+
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch {
+
+        throw new Error(
+          "The server returned an invalid response."
+        );
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Payout request failed."
+        );
+
+      }
+
+
+      showMessage(
+
+        "✅ Payout request submitted successfully. Your request is now pending review.",
+
+        "success"
+
+      );
+
+
+      /* Refresh balance */
+
+      await loadUser();
+
+
+      /* Clear fields */
+
+      if (
+        method ===
+        "upi"
+      ) {
+
+        document.getElementById(
+          "upiId"
+        ).value = "";
+
+        document.getElementById(
+          "upiName"
+        ).value = "";
+
+        document.getElementById(
+          "upiExtra"
+        ).value = "";
+
+        document.getElementById(
+          "upiConfirm"
+        ).checked = false;
+
+      }
+
+
+      if (
+        method ===
+        "paypal"
+      ) {
+
+        document.getElementById(
+          "paypalEmail"
+        ).value = "";
+
+        document.getElementById(
+          "paypalName"
+        ).value = "";
+
+        document.getElementById(
+          "paypalExtra"
+        ).value = "";
+
+        document.getElementById(
+          "paypalConfirm"
+        ).checked = false;
+
+      }
+
+
+      if (
+        method ===
+        "gift_card"
+      ) {
+
+        document.getElementById(
+          "giftType"
+        ).value = "";
+
+        document.getElementById(
+          "giftEmail"
+        ).value = "";
+
+        document.getElementById(
+          "giftName"
+        ).value = "";
+
+        document.getElementById(
+          "giftExtra"
+        ).value = "";
+
+        document.getElementById(
+          "giftConfirm"
+        ).checked = false;
+
+      }
+
+
+      if (
+        method ===
+        "game_reward"
+      ) {
+
+        document.getElementById(
+          "steamGame"
+        ).value = "";
+
+        document.getElementById(
+          "steamEmail"
+        ).value = "";
+
+        document.getElementById(
+          "steamDiscord"
+        ).value = "";
+
+        document.getElementById(
+          "steamExtra"
+        ).value = "";
+
+        document.getElementById(
+          "steamConfirm"
+        ).checked = false;
+
+      }
+
+
+    } catch (error) {
+
+      console.error(
+        "PAYOUT ERROR:",
+        error
+      );
+
+
+      showMessage(
+        error.message ||
+        "Could not submit payout request.",
+        "error"
+      );
+
+    } finally {
+
+      buttons.forEach(
+        button => {
+          button.disabled =
+            false;
+        }
+      );
+
+    }
+
+  }
+
+
+  /* =========================================
+     LOGOUT
+  ========================================= */
+
+  document
+    .getElementById(
+      "logoutBtn"
+    )
+    .addEventListener(
+      "click",
+      async function() {
+
+        try {
+
+          await fetch(
+            "/api/logout",
+            {
+              method: "POST"
+            }
+          );
+
+        } catch {}
+
+        window.location.href =
+          "/";
+
+      }
+    );
+
+
+  /* =========================================
+     START
+  ========================================= */
+
+  loadUser();
 
 </script>
 
+
 </body>
+
 </html>
