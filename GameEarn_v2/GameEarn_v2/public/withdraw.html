@@ -19,21 +19,15 @@
 
   <style>
 
-    /* =========================================
-       PAYOUT PAGE
-    ========================================= */
-
     .payout-page {
       max-width: 1100px;
       margin: 0 auto;
       padding: 45px 28px 80px;
     }
 
-
     .payout-header {
       margin-bottom: 30px;
     }
-
 
     .payout-header small {
       color: #6ea0ff;
@@ -42,23 +36,16 @@
       text-transform: uppercase;
     }
 
-
     .payout-header h1 {
       margin: 8px 0 8px;
       font-size: 42px;
     }
-
 
     .payout-header p {
       color: #8fa4c2;
       font-size: 16px;
       margin: 0;
     }
-
-
-    /* =========================================
-       BALANCE
-    ========================================= */
 
     .balance-card {
       background:
@@ -69,22 +56,15 @@
         );
 
       border: 1px solid #27466f;
-
       border-radius: 18px;
-
       padding: 24px 28px;
-
       margin-bottom: 28px;
 
       display: flex;
-
       justify-content: space-between;
-
       align-items: center;
-
       gap: 20px;
     }
-
 
     .balance-card small {
       color: #7fa8e8;
@@ -92,99 +72,65 @@
       letter-spacing: 1px;
     }
 
-
     .balance-card strong {
       display: block;
-
       font-size: 34px;
-
       margin-top: 5px;
-
       color: white;
     }
-
 
     .balance-icon {
       width: 58px;
       height: 58px;
-
       border-radius: 16px;
 
       display: flex;
-
       align-items: center;
-
       justify-content: center;
 
       font-size: 27px;
-
       background: #203b61;
     }
-
-
-    /* =========================================
-       METHOD SELECTOR
-    ========================================= */
 
     .method-title {
       margin-bottom: 15px;
     }
 
-
     .method-title h2 {
       margin: 0 0 5px;
     }
-
 
     .method-title p {
       margin: 0;
       color: #8297b5;
     }
 
-
     .method-grid {
-
       display: grid;
-
       grid-template-columns:
         repeat(4, 1fr);
 
       gap: 14px;
-
       margin-bottom: 25px;
     }
 
-
     .method-card {
-
       border: 1px solid #29415f;
-
       background: #0f1d30;
-
       border-radius: 16px;
-
       padding: 22px 18px;
 
       cursor: pointer;
-
-      transition:
-        .2s ease;
-
+      transition: .2s ease;
       color: white;
     }
 
-
     .method-card:hover {
-
       border-color: #4d82ff;
-
       transform: translateY(-2px);
-
     }
 
-
     .method-card.active {
-
       border: 2px solid #2878ff;
 
       background:
@@ -199,56 +145,32 @@
         rgba(40,120,255,.10);
     }
 
-
     .method-icon {
-
       font-size: 30px;
-
       margin-bottom: 12px;
     }
 
-
     .method-card h3 {
-
       margin: 0 0 5px;
-
       font-size: 18px;
     }
 
-
     .method-card p {
-
       margin: 0;
-
       color: #7f96b7;
-
       font-size: 13px;
-
       line-height: 1.4;
     }
 
-
-    /* =========================================
-       FORM
-    ========================================= */
-
     .payout-form {
-
       background: #0e1b2d;
-
       border: 1px solid #233c5c;
-
       border-radius: 20px;
-
       padding: 30px;
-
     }
 
-
     .form-header {
-
       margin-bottom: 28px;
-
       padding-bottom: 20px;
 
       border-bottom:
@@ -256,91 +178,63 @@
         rgba(255,255,255,.07);
     }
 
-
     .form-header h2 {
-
       margin: 0 0 7px;
-
       font-size: 27px;
     }
 
-
     .form-header p {
-
       margin: 0;
-
       color: #8197b7;
     }
 
-
     .form-grid {
-
       display: grid;
-
       grid-template-columns:
         1fr 1fr;
 
       gap: 20px;
     }
 
-
     .field {
-
       display: flex;
-
       flex-direction: column;
-
       gap: 8px;
     }
 
-
     .field.full {
-
       grid-column:
         1 / -1;
     }
 
-
     .field label {
-
       font-weight: 700;
-
       font-size: 14px;
-
       color: #dce7f8;
     }
-
 
     .field input,
     .field select,
     .field textarea {
-
       width: 100%;
-
       box-sizing: border-box;
 
       background: #091525;
-
       border: 1px solid #294361;
-
       color: white;
 
       border-radius: 12px;
-
       padding: 14px 15px;
 
       font-size: 15px;
-
       outline: none;
 
       transition: .2s ease;
     }
 
-
     .field input:focus,
     .field select:focus,
     .field textarea:focus {
-
       border-color: #4385ff;
 
       box-shadow:
@@ -348,28 +242,17 @@
         rgba(67,133,255,.10);
     }
 
-
     .field textarea {
-
       min-height: 125px;
-
       resize: vertical;
     }
 
-
     .field input::placeholder,
     .field textarea::placeholder {
-
       color: #607692;
     }
 
-
-    /* =========================================
-       FIXED AMOUNT
-    ========================================= */
-
     .fixed-amount {
-
       background:
         linear-gradient(
           135deg,
@@ -378,105 +261,68 @@
         );
 
       border: 1px solid #31557f;
-
       border-radius: 14px;
 
       padding: 18px;
 
       display: flex;
-
       align-items: center;
-
       justify-content: space-between;
 
       min-height: 72px;
-
       box-sizing: border-box;
     }
 
-
     .fixed-amount .amount {
-
       font-size: 25px;
-
       font-weight: 900;
-
       color: white;
     }
 
-
     .fixed-amount .label {
-
       color: #82a6d8;
-
       font-size: 12px;
-
       margin-top: 3px;
 
       font-family: monospace;
-
       letter-spacing: 1px;
     }
 
-
-    /* =========================================
-       CHECKBOX
-    ========================================= */
-
     .confirm {
-
       margin-top: 22px;
 
       display: flex;
-
       align-items: flex-start;
 
       gap: 11px;
 
       color: #b6c5d9;
-
       font-size: 14px;
-
       line-height: 1.5;
     }
 
-
     .confirm input {
-
       width: 18px;
-
       height: 18px;
 
       margin-top: 2px;
 
       accent-color: #4385ff;
-
       flex-shrink: 0;
     }
 
-
-    /* =========================================
-       SUBMIT
-    ========================================= */
-
     .submit-area {
-
       margin-top: 26px;
 
       display: flex;
-
       align-items: center;
 
       gap: 18px;
-
       flex-wrap: wrap;
     }
 
-
     .submit-button {
-
       border: none;
-
       border-radius: 12px;
 
       background:
@@ -491,17 +337,13 @@
       padding: 14px 24px;
 
       font-size: 16px;
-
       font-weight: 800;
 
       cursor: pointer;
-
       transition: .2s ease;
     }
 
-
     .submit-button:hover {
-
       transform: translateY(-1px);
 
       box-shadow:
@@ -509,33 +351,20 @@
         rgba(50,100,255,.25);
     }
 
-
     .submit-button:disabled {
-
       opacity: .5;
-
       cursor: not-allowed;
 
       transform: none;
-
       box-shadow: none;
     }
 
-
     .amount-note {
-
       color: #7890b0;
-
       font-size: 13px;
     }
 
-
-    /* =========================================
-       MESSAGE
-    ========================================= */
-
     #withdrawMsg {
-
       margin-top: 20px;
 
       padding: 13px 15px;
@@ -545,13 +374,10 @@
       display: none;
 
       font-size: 14px;
-
       line-height: 1.5;
     }
 
-
     #withdrawMsg.success {
-
       display: block;
 
       background:
@@ -564,9 +390,7 @@
       color: #6de0a5;
     }
 
-
     #withdrawMsg.error {
-
       display: block;
 
       background:
@@ -579,81 +403,51 @@
       color: #ff9696;
     }
 
-
-    /* =========================================
-       HIDDEN
-    ========================================= */
-
     .hidden {
       display: none !important;
     }
 
-
-    /* =========================================
-       MOBILE
-    ========================================= */
-
     @media(max-width: 850px) {
 
       .method-grid {
-
         grid-template-columns:
           1fr 1fr;
-
       }
 
       .form-grid {
-
         grid-template-columns:
           1fr;
-
       }
 
       .field.full {
-
         grid-column:
           auto;
       }
 
     }
 
-
     @media(max-width: 550px) {
 
       .payout-page {
-
         padding:
           30px 16px 60px;
-
       }
-
 
       .payout-header h1 {
-
         font-size: 32px;
-
       }
-
 
       .method-grid {
-
         grid-template-columns:
           1fr;
-
       }
-
 
       .balance-card {
-
         padding: 20px;
-
       }
 
-
       .payout-form {
-
         padding: 20px;
-
       }
 
     }
@@ -705,10 +499,6 @@
 <main class="payout-page">
 
 
-  <!-- =====================================
-       HEADER
-  ====================================== -->
-
   <section class="payout-header">
 
     <small>
@@ -725,10 +515,6 @@
 
   </section>
 
-
-  <!-- =====================================
-       BALANCE
-  ====================================== -->
 
   <section class="balance-card">
 
@@ -753,10 +539,6 @@
   </section>
 
 
-  <!-- =====================================
-       METHOD SELECTOR
-  ====================================== -->
-
   <section>
 
     <div class="method-title">
@@ -774,8 +556,6 @@
 
     <div class="method-grid">
 
-
-      <!-- UPI -->
 
       <div
         class="method-card active"
@@ -797,8 +577,6 @@
       </div>
 
 
-      <!-- PAYPAL -->
-
       <div
         class="method-card"
         data-method="paypal"
@@ -819,8 +597,6 @@
       </div>
 
 
-      <!-- GIFT CARD -->
-
       <div
         class="method-card"
         data-method="gift_card"
@@ -840,8 +616,6 @@
 
       </div>
 
-
-      <!-- STEAM -->
 
       <div
         class="method-card"
@@ -867,16 +641,10 @@
   </section>
 
 
-  <!-- =====================================
-       FORM
-  ====================================== -->
-
   <section class="payout-form">
 
 
-    <!-- ===================================
-         UPI FORM
-    ==================================== -->
+    <!-- UPI -->
 
     <div
       id="upiForm"
@@ -999,9 +767,7 @@
     </div>
 
 
-    <!-- ===================================
-         PAYPAL FORM
-    ==================================== -->
+    <!-- PAYPAL -->
 
     <div
       id="paypalForm"
@@ -1124,9 +890,7 @@
     </div>
 
 
-    <!-- ===================================
-         GIFT CARD FORM
-    ==================================== -->
+    <!-- GIFT CARD -->
 
     <div
       id="giftForm"
@@ -1173,7 +937,10 @@
             Gift card type
           </label>
 
-          <select id="giftType">
+          <select
+            id="giftType"
+            onchange="toggleGiftOther()"
+          >
 
             <option value="">
               Select gift card
@@ -1196,6 +963,27 @@
             </option>
 
           </select>
+
+        </div>
+
+
+        <!-- NEW: SHOW ONLY WHEN "OTHER" IS SELECTED -->
+
+        <div
+          id="giftOtherWrap"
+          class="field hidden"
+        >
+
+          <label>
+            Specific gift card type
+          </label>
+
+          <input
+            id="giftOther"
+            type="text"
+            placeholder="e.g. Roblox, PlayStation, Xbox, etc."
+            autocomplete="off"
+          >
 
         </div>
 
@@ -1280,9 +1068,7 @@
     </div>
 
 
-    <!-- ===================================
-         STEAM FORM
-    ==================================== -->
+    <!-- STEAM -->
 
     <div
       id="steamForm"
@@ -1304,8 +1090,6 @@
 
       <div class="form-grid">
 
-
-        <!-- FIXED $1 -->
 
         <div class="field">
 
@@ -1342,8 +1126,6 @@
         </div>
 
 
-        <!-- SPECIFIC GAME -->
-
         <div class="field">
 
           <label for="steamGame">
@@ -1359,8 +1141,6 @@
 
         </div>
 
-
-        <!-- EMAIL -->
 
         <div class="field">
 
@@ -1378,8 +1158,6 @@
         </div>
 
 
-        <!-- DISCORD -->
-
         <div class="field">
 
           <label for="steamDiscord">
@@ -1395,8 +1173,6 @@
 
         </div>
 
-
-        <!-- ADDITIONAL -->
 
         <div class="field full">
 
@@ -1448,10 +1224,6 @@
     </div>
 
 
-    <!-- ===================================
-         MESSAGE
-    ==================================== -->
-
     <div id="withdrawMsg"></div>
 
 
@@ -1462,16 +1234,8 @@
 
 <script>
 
-  /* =========================================
-     GLOBAL
-  ========================================= */
-
   let currentUser = null;
 
-
-  /* =========================================
-     GET USER
-  ========================================= */
 
   async function loadUser() {
 
@@ -1526,10 +1290,6 @@
 
   }
 
-
-  /* =========================================
-     METHOD SWITCHING
-  ========================================= */
 
   document
     .querySelectorAll(
@@ -1644,8 +1404,43 @@
 
 
   /* =========================================
-     MESSAGE
+     GIFT CARD - OTHER TYPE
   ========================================= */
+
+  function toggleGiftOther() {
+
+    const type =
+      document.getElementById(
+        "giftType"
+      ).value;
+
+
+    const otherWrap =
+      document.getElementById(
+        "giftOtherWrap"
+      );
+
+
+    if (type === "Other") {
+
+      otherWrap.classList.remove(
+        "hidden"
+      );
+
+    } else {
+
+      otherWrap.classList.add(
+        "hidden"
+      );
+
+      document.getElementById(
+        "giftOther"
+      ).value = "";
+
+    }
+
+  }
+
 
   function showMessage(
     message,
@@ -1673,10 +1468,6 @@
 
   }
 
-
-  /* =========================================
-     SUBMIT PAYOUT
-  ========================================= */
 
   async function submitPayout(
     method
@@ -1864,6 +1655,43 @@
         ).value;
 
 
+      const otherType =
+        document.getElementById(
+          "giftOther"
+        ).value.trim();
+
+
+      if (!type) {
+
+        showMessage(
+          "Please select a gift card type.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (
+        type === "Other" &&
+        !otherType
+      ) {
+
+        showMessage(
+          "Please enter the specific gift card type you want.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      const selectedGiftType =
+        type === "Other"
+          ? otherType
+          : type;
+
+
       const email =
         document.getElementById(
           "giftEmail"
@@ -1886,17 +1714,6 @@
         document.getElementById(
           "giftConfirm"
         ).checked;
-
-
-      if (!type) {
-
-        showMessage(
-          "Please select a gift card type.",
-          "error"
-        );
-
-        return;
-      }
 
 
       if (!email) {
@@ -1923,7 +1740,7 @@
 
       details =
         "Gift card: " +
-        type +
+        selectedGiftType +
         "\n" +
         "Delivery email: " +
         email +
@@ -2185,12 +2002,8 @@
       );
 
 
-      /* Refresh balance */
-
       await loadUser();
 
-
-      /* Clear fields */
 
       if (
         method ===
@@ -2248,6 +2061,12 @@
         document.getElementById(
           "giftType"
         ).value = "";
+
+        document.getElementById(
+          "giftOther"
+        ).value = "";
+
+        toggleGiftOther();
 
         document.getElementById(
           "giftEmail"
@@ -2324,10 +2143,6 @@
   }
 
 
-  /* =========================================
-     LOGOUT
-  ========================================= */
-
   document
     .getElementById(
       "logoutBtn"
@@ -2353,10 +2168,6 @@
       }
     );
 
-
-  /* =========================================
-     START
-  ========================================= */
 
   loadUser();
 
