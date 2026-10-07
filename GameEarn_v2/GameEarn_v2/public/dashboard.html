@@ -1,446 +1,816 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>GameEarn - Dashboard</title>
+<title>GameEarn Dashboard</title>
 
-  <link rel="stylesheet" href="/style.css">
+<style>
+*{
+  box-sizing:border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+body{
+  margin:0;
+  background:#06101f;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 80% 10%, rgba(82, 91, 255, 0.18), transparent 30%),
-        #06101f;
-      color: #f5f7ff;
-    }
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
-    header {
-      height: 76px;
-      padding: 0 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5, 15, 29, 0.9);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(12px);
-    }
+button{
+  font-family:inherit;
+  cursor:pointer;
+}
 
-    .brand {
-      text-decoration: none;
-      font-size: 27px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: white;
-    }
+header{
+  height:76px;
+  padding:0 6%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #1d3049;
+  background:#071322;
+}
 
-    .brand span {
-      color: #5d8cff;
-    }
+.brand{
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
 
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-    }
+.brand span{
+  color:#5b8cff;
+}
 
-    nav a,
-    nav button {
-      color: #dbe5ff;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 700;
-      background: none;
-      border: 0;
-      cursor: pointer;
-    }
+nav{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
 
-    nav a:hover,
-    nav button:hover {
-      color: #6d91ff;
-    }
+nav a,
+nav button{
+  color:#a9bad1;
+  font-size:15px;
+  font-weight:700;
+  background:none;
+  border:0;
+}
 
-    main {
-      width: min(1200px, 92%);
-      margin: 0 auto;
-      padding: 55px 0 80px;
-    }
+nav a:hover,
+nav button:hover{
+  color:#fff;
+}
 
-    .welcome {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 30px;
-      margin-bottom: 35px;
-    }
+main{
+  max-width:1250px;
+  margin:auto;
+  padding:48px 24px 80px;
+}
 
-    .eyebrow {
-      color: #6f98ff;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
+/* TOP */
 
-    h1 {
-      margin: 0;
-      font-size: clamp(34px, 5vw, 54px);
-      letter-spacing: -2px;
-    }
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:30px;
+  margin-bottom:30px;
+}
 
-    .subtitle {
-      color: #8ea1c4;
-      margin-top: 12px;
-      font-size: 16px;
-    }
+.eyebrow{
+  color:#6595ff;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:2px;
+}
 
-    .balance-card {
-      min-width: 240px;
-      padding: 25px 28px;
-      border-radius: 22px;
-      background:
-        linear-gradient(135deg, #386cff, #6748e8);
-      box-shadow: 0 20px 50px rgba(64, 82, 255, 0.25);
-    }
+h1{
+  font-size:40px;
+  margin:10px 0 8px;
+  letter-spacing:-1.5px;
+}
 
-    .balance-card small {
-      display: block;
-      color: rgba(255,255,255,0.75);
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      font-size: 11px;
-    }
+.subtitle{
+  margin:0;
+  color:#8499b5;
+  font-size:16px;
+}
 
-    .balance-card strong {
-      display: block;
-      margin-top: 7px;
-      font-size: 38px;
-    }
+/* BALANCE */
 
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-bottom: 28px;
-    }
+.balance{
+  min-width:230px;
+  padding:25px 28px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#376ff5,#6847ef);
+  box-shadow:0 15px 40px rgba(50,90,240,.20);
+}
 
-    .action {
-      text-decoration: none;
-      color: white;
-      padding: 26px;
-      min-height: 155px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(
-        145deg,
-        rgba(19, 36, 62, 0.95),
-        rgba(10, 24, 43, 0.95)
-      );
-      transition: 0.2s ease;
-    }
+.balance small{
+  display:block;
+  color:#d7e1ff;
+  font-weight:800;
+  letter-spacing:1.5px;
+  font-size:12px;
+}
 
-    .action:hover {
-      transform: translateY(-5px);
-      border-color: rgba(99, 132, 255, 0.5);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    }
+.balance strong{
+  display:block;
+  font-size:36px;
+  margin-top:7px;
+}
 
-    .action-icon {
-      font-size: 28px;
-      margin-bottom: 18px;
-    }
+/* STATS */
 
-    .action h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:28px;
+}
 
-    .action p {
-      margin: 0;
-      color: #91a4c7;
-      font-size: 14px;
-    }
+.stat{
+  background:#0c1b2d;
+  border:1px solid #203754;
+  border-radius:18px;
+  padding:21px;
+}
 
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 35px 0 15px;
-    }
+.stat-icon{
+  font-size:23px;
+  margin-bottom:12px;
+}
 
-    .section-title h2 {
-      margin: 0;
-      font-size: 23px;
-    }
+.stat-label{
+  color:#8095b1;
+  font-size:13px;
+}
 
-    .section-title span {
-      color: #6f98ff;
-      font-size: 13px;
-    }
+.stat-value{
+  font-size:24px;
+  font-weight:800;
+  margin-top:5px;
+}
 
-    .earn-banner {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 25px;
-      padding: 30px;
-      border-radius: 22px;
-      background:
-        linear-gradient(120deg,
-          rgba(44, 76, 155, 0.45),
-          rgba(91, 49, 157, 0.35));
-      border: 1px solid rgba(112, 142, 255, 0.2);
-      margin-bottom: 28px;
-    }
+/* DAILY */
 
-    .earn-banner h2 {
-      margin: 0 0 8px;
-      font-size: 25px;
-    }
+.daily{
+  background:#0c1b2d;
+  border:1px solid #203754;
+  border-radius:22px;
+  padding:27px;
+  margin-bottom:28px;
+}
 
-    .earn-banner p {
-      margin: 0;
-      color: #9db0d1;
-      line-height: 1.5;
-    }
+.daily-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
 
-    .earn-button {
-      display: inline-block;
-      padding: 14px 24px;
-      border-radius: 12px;
-      background: #527cff;
-      color: white;
-      text-decoration: none;
-      font-weight: 800;
-      white-space: nowrap;
-    }
+.daily h2{
+  margin:0 0 7px;
+  font-size:23px;
+}
 
-    .earn-button:hover {
-      background: #668cff;
-    }
+.daily p{
+  margin:0;
+  color:#8095b1;
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-bottom: 28px;
-    }
+.streak{
+  padding:9px 15px;
+  background:#172b47;
+  border:1px solid #294565;
+  border-radius:30px;
+  color:#ffb84d;
+  font-weight:800;
+}
 
-    .stat {
-      padding: 23px;
-      border-radius: 18px;
-      background: #0c1a2d;
-      border: 1px solid rgba(255,255,255,0.07);
-    }
+.progress{
+  height:12px;
+  background:#14263d;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:23px;
+}
 
-    .stat small {
-      color: #8196bb;
-      font-size: 13px;
-    }
+.progress-bar{
+  height:100%;
+  width:40%;
+  background:linear-gradient(90deg,#4d82ff,#8056ff);
+  border-radius:20px;
+}
 
-    .stat strong {
-      display: block;
-      margin-top: 9px;
-      font-size: 25px;
-    }
+.progress-info{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+  color:#8499b5;
+  font-size:13px;
+}
 
-    .panel {
-      padding: 27px;
-      border-radius: 22px;
-      background: #0c1a2d;
-      border: 1px solid rgba(255,255,255,0.07);
-    }
+/* MISSIONS */
 
-    .panel h2 {
-      margin-top: 0;
-      font-size: 22px;
-    }
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:0 0 15px;
+}
 
-    .tx {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 17px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      color: #9db0d1;
-    }
+.section-title h2{
+  font-size:23px;
+  margin:0;
+}
 
-    .tx:last-child {
-      border-bottom: 0;
-    }
+.section-title a{
+  color:#6f9aff;
+  font-size:14px;
+  font-weight:700;
+}
 
-    .tx b {
-      color: #6fa0ff;
-    }
+.missions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-bottom:28px;
+}
 
-    .empty {
-      color: #8196bb;
-      padding: 15px 0;
-    }
+.mission{
+  background:#0c1b2d;
+  border:1px solid #203754;
+  border-radius:19px;
+  padding:22px;
+  transition:.2s;
+}
 
-    @media (max-width: 800px) {
-      header {
-        padding: 0 20px;
-      }
+.mission:hover{
+  transform:translateY(-3px);
+  border-color:#385b86;
+}
 
-      nav {
-        gap: 14px;
-      }
+.mission-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-      nav a {
-        display: none;
-      }
+.mission-icon{
+  width:45px;
+  height:45px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:13px;
+  background:#152844;
+  font-size:22px;
+}
 
-      main {
-        width: 92%;
-        padding-top: 35px;
-      }
+.reward{
+  color:#62d69c;
+  font-size:14px;
+  font-weight:800;
+}
 
-      .welcome {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+.mission h3{
+  margin:17px 0 7px;
+  font-size:18px;
+}
 
-      .balance-card {
-        width: 100%;
-      }
+.mission p{
+  margin:0;
+  color:#8499b5;
+  line-height:1.5;
+  font-size:14px;
+}
 
-      .quick-actions,
-      .stats {
-        grid-template-columns: 1fr;
-      }
+.mission-button{
+  display:block;
+  text-align:center;
+  margin-top:17px;
+  padding:11px;
+  border-radius:11px;
+  background:#315fca;
+  color:white;
+  font-size:14px;
+  font-weight:800;
+}
 
-      .earn-banner {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+/* LOWER */
+
+.lower{
+  display:grid;
+  grid-template-columns:1.4fr .8fr;
+  gap:18px;
+}
+
+.panel{
+  background:#0c1b2d;
+  border:1px solid #203754;
+  border-radius:21px;
+  padding:25px;
+}
+
+.panel h2{
+  margin:0 0 18px;
+  font-size:22px;
+}
+
+.tx{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 0;
+  border-bottom:1px solid #172b42;
+}
+
+.tx:last-child{
+  border-bottom:0;
+}
+
+.tx-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.tx-icon{
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#14253c;
+  border-radius:11px;
+}
+
+.tx-name{
+  font-weight:700;
+}
+
+.tx-date{
+  color:#7187a3;
+  font-size:12px;
+  margin-top:3px;
+}
+
+.tx-amount{
+  color:#61d59a;
+  font-weight:800;
+}
+
+/* QUICK */
+
+.quick{
+  display:grid;
+  gap:12px;
+}
+
+.quick a{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:17px;
+  background:#101f33;
+  border:1px solid #203754;
+  border-radius:14px;
+  transition:.2s;
+}
+
+.quick a:hover{
+  border-color:#41689b;
+  transform:translateX(3px);
+}
+
+.quick-icon{
+  font-size:23px;
+}
+
+.quick-title{
+  font-weight:800;
+}
+
+.quick-text{
+  color:#778da8;
+  font-size:12px;
+  margin-top:3px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .missions{
+    grid-template-columns:1fr;
+  }
+
+  .lower{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:650px){
+
+  header{
+    padding:0 18px;
+  }
+
+  nav{
+    gap:12px;
+  }
+
+  nav a:nth-child(2){
+    display:none;
+  }
+
+  main{
+    padding:30px 16px 60px;
+  }
+
+  .top{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .balance{
+    width:100%;
+  }
+
+  h1{
+    font-size:32px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .daily-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <a class="brand" href="/">GAME<span>EARN</span></a>
+
+  <a class="brand" href="/dashboard.html">
+    GAME<span>EARN</span>
+  </a>
 
   <nav>
+    <a href="/dashboard.html">Dashboard</a>
     <a href="/offers.html">Earn</a>
     <a href="/withdraw.html">Redeem</a>
     <a href="/referrals.html">Referrals</a>
-    <button id="out">Log out</button>
+    <button id="logout">Log out</button>
   </nav>
+
 </header>
+
 
 <main>
 
-  <!-- Welcome -->
-  <section class="welcome">
+  <!-- TOP -->
+
+  <section class="top">
 
     <div>
       <div class="eyebrow">YOUR DASHBOARD</div>
 
       <h1>
-        Hey, <span id="name">...</span> 👋
+        Hey, <span id="username">...</span> 👋
       </h1>
 
       <p class="subtitle">
-        Earn rewards by completing games, offers and tasks.
+        Keep earning. Your next reward is waiting.
       </p>
     </div>
 
-    <div class="balance-card">
+
+    <div class="balance">
+
       <small>AVAILABLE BALANCE</small>
-      <strong>$<span id="bal">0.00</span></strong>
+
+      <strong>
+        $<span id="balance">0.00</span>
+      </strong>
+
     </div>
 
   </section>
 
 
-  <!-- Main actions -->
-  <section class="quick-actions">
-
-    <a class="action" href="/offers.html">
-      <div class="action-icon">🎮</div>
-      <h3>Earn Rewards</h3>
-      <p>Complete games, apps and tasks to earn.</p>
-    </a>
-
-    <a class="action" href="/withdraw.html">
-      <div class="action-icon">💳</div>
-      <h3>Redeem</h3>
-      <p>Use your balance for available rewards.</p>
-    </a>
-
-    <a class="action" href="/referrals.html">
-      <div class="action-icon">👥</div>
-      <h3>Refer Friends</h3>
-      <p>Invite friends and earn referral rewards.</p>
-    </a>
-
-  </section>
-
-
-  <!-- Earn banner -->
-  <div class="earn-banner">
-
-    <div>
-      <h2>🎮 Ready to earn?</h2>
-
-      <p>
-        Discover available game rewards, offers and tasks.
-        New opportunities can be added regularly.
-      </p>
-    </div>
-
-    <a class="earn-button" href="/offers.html">
-      Browse offers →
-    </a>
-
-  </div>
-
-
-  <!-- Stats -->
-  <div class="section-title">
-    <h2>Your activity</h2>
-    <span>Account overview</span>
-  </div>
+  <!-- STATS -->
 
   <section class="stats">
 
     <div class="stat">
-      <small>AVAILABLE BALANCE</small>
-      <strong>$<span id="statBalance">0.00</span></strong>
+      <div class="stat-icon">💰</div>
+      <div class="stat-label">Total balance</div>
+      <div class="stat-value">
+        $<span id="balance2">0.00</span>
+      </div>
     </div>
 
-    <div class="stat">
-      <small>RECENT EARNINGS</small>
-      <strong id="recentTotal">$0.00</strong>
-    </div>
 
     <div class="stat">
-      <small>ACCOUNT STATUS</small>
-      <strong>Active</strong>
+      <div class="stat-icon">🎮</div>
+      <div class="stat-label">Tasks completed</div>
+      <div class="stat-value" id="tasks">
+        0
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-label">Daily streak</div>
+      <div class="stat-value">
+        1 day
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-label">Weekly rank</div>
+      <div class="stat-value">
+        #--
+      </div>
     </div>
 
   </section>
 
 
-  <!-- Recent activity -->
-  <section class="panel">
+  <!-- DAILY GOAL -->
 
-    <h2>Recent activity</h2>
+  <section class="daily">
 
-    <div id="tx">
-      Loading...
+    <div class="daily-head">
+
+      <div>
+        <h2>🎯 Today's earning goal</h2>
+
+        <p>
+          Complete 10 tasks to unlock today's goal reward.
+        </p>
+      </div>
+
+      <div class="streak">
+        🔥 Keep your streak
+      </div>
+
+    </div>
+
+
+    <div class="progress">
+
+      <div
+        class="progress-bar"
+        id="goalBar">
+      </div>
+
+    </div>
+
+
+    <div class="progress-info">
+
+      <span>
+        <span id="goalCount">0</span> / 10 completed
+      </span>
+
+      <span>
+        Goal reward: +$0.50
+      </span>
+
+    </div>
+
+  </section>
+
+
+  <!-- MISSIONS -->
+
+  <div class="section-title">
+
+    <h2>Today's missions</h2>
+
+    <a href="/offers.html">
+      View all →
+    </a>
+
+  </div>
+
+
+  <section class="missions">
+
+    <a class="mission" href="/offers.html">
+
+      <div class="mission-top">
+
+        <div class="mission-icon">
+          🎮
+        </div>
+
+        <div class="reward">
+          +$0.96
+        </div>
+
+      </div>
+
+      <h3>Reach Level 5</h3>
+
+      <p>
+        Complete the game milestone and receive your reward.
+      </p>
+
+      <div class="mission-button">
+        Start mission →
+      </div>
+
+    </a>
+
+
+    <a class="mission" href="/offers.html">
+
+      <div class="mission-top">
+
+        <div class="mission-icon">
+          📱
+        </div>
+
+        <div class="reward">
+          +$2.50
+        </div>
+
+      </div>
+
+      <h3>Complete a new task</h3>
+
+      <p>
+        Discover available apps, games and qualifying tasks.
+      </p>
+
+      <div class="mission-button">
+        Earn now →
+      </div>
+
+    </a>
+
+
+    <a class="mission" href="/referrals.html">
+
+      <div class="mission-top">
+
+        <div class="mission-icon">
+          👥
+        </div>
+
+        <div class="reward">
+          +$1.00
+        </div>
+
+      </div>
+
+      <h3>Invite a friend</h3>
+
+      <p>
+        Share your referral code and earn when your friend qualifies.
+      </p>
+
+      <div class="mission-button">
+        Invite friends →
+      </div>
+
+    </a>
+
+  </section>
+
+
+  <!-- LOWER -->
+
+  <section class="lower">
+
+
+    <!-- ACTIVITY -->
+
+    <div class="panel">
+
+      <h2>⚡ Recent activity</h2>
+
+      <div id="transactions">
+
+        <div class="tx">
+
+          <div class="tx-left">
+
+            <div class="tx-icon">
+              🎮
+            </div>
+
+            <div>
+
+              <div class="tx-name">
+                Loading activity...
+              </div>
+
+              <div class="tx-date">
+                Please wait
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="panel">
+
+      <h2>🚀 Quick actions</h2>
+
+      <div class="quick">
+
+        <a href="/offers.html">
+
+          <div class="quick-icon">
+            🎮
+          </div>
+
+          <div>
+            <div class="quick-title">
+              Earn rewards
+            </div>
+
+            <div class="quick-text">
+              Find games and tasks
+            </div>
+          </div>
+
+        </a>
+
+
+        <a href="/withdraw.html">
+
+          <div class="quick-icon">
+            💳
+          </div>
+
+          <div>
+            <div class="quick-title">
+              Redeem
+            </div>
+
+            <div class="quick-text">
+              Request your reward
+            </div>
+          </div>
+
+        </a>
+
+
+        <a href="/referrals.html">
+
+          <div class="quick-icon">
+            👥
+          </div>
+
+          <div>
+            <div class="quick-title">
+              Refer friends
+            </div>
+
+            <div class="quick-text">
+              Earn extra rewards
+            </div>
+          </div>
+
+        </a>
+
+      </div>
+
     </div>
 
   </section>
@@ -450,122 +820,208 @@
 
 <script>
 
-async function loadDashboard() {
+const usernameEl =
+  document.getElementById("username");
 
-  try {
+const balanceEl =
+  document.getElementById("balance");
 
-    const response = await fetch("/api/me");
+const balance2El =
+  document.getElementById("balance2");
 
-    if (!response.ok) {
-      window.location.href = "/";
+const tasksEl =
+  document.getElementById("tasks");
+
+const transactionsEl =
+  document.getElementById("transactions");
+
+const goalBar =
+  document.getElementById("goalBar");
+
+const goalCount =
+  document.getElementById("goalCount");
+
+
+async function loadDashboard(){
+
+  try{
+
+    const meResponse =
+      await fetch("/api/me");
+
+    if(!meResponse.ok){
+
+      window.location.href="/";
+
       return;
     }
 
-    const data = await response.json();
-    const user = data.user;
+    const meData =
+      await meResponse.json();
 
-    document.getElementById("name").textContent =
-      user.username || "Player";
+    const user =
+      meData.user;
+
+
+    usernameEl.textContent =
+      user.username || "Gamer";
+
 
     const balance =
       Number(user.balance_cents || 0) / 100;
 
-    document.getElementById("bal").textContent =
+
+    balanceEl.textContent =
       balance.toFixed(2);
 
-    document.getElementById("statBalance").textContent =
+
+    balance2El.textContent =
       balance.toFixed(2);
 
 
-    const transactionResponse =
-      await fetch("/api/transactions");
-
-    const transactionData =
-      await transactionResponse.json();
-
-    const transactions =
-      transactionData.transactions || [];
+    loadTransactions();
 
 
-    const txContainer =
-      document.getElementById("tx");
-
-
-    if (!transactions.length) {
-
-      txContainer.innerHTML =
-        '<div class="empty">No activity yet. Start earning to see your activity here.</div>';
-
-      document.getElementById("recentTotal").textContent =
-        "$0.00";
-
-      return;
-    }
-
-
-    let recentTotal = 0;
-
-
-    txContainer.innerHTML =
-      transactions.slice(0, 8).map(transaction => {
-
-        const amount =
-          Number(transaction.amount_cents || 0) / 100;
-
-        if (amount > 0) {
-          recentTotal += amount;
-        }
-
-        const sign =
-          amount >= 0 ? "+" : "-";
-
-        return `
-          <div class="tx">
-            <span>
-              ${transaction.description || "Reward"}
-            </span>
-
-            <b>
-              ${sign}$${Math.abs(amount).toFixed(2)}
-            </b>
-          </div>
-        `;
-
-      }).join("");
-
-
-    document.getElementById("recentTotal").textContent =
-      "$" + recentTotal.toFixed(2);
-
-
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
-
-    document.getElementById("tx").innerHTML =
-      '<div class="empty">Unable to load activity.</div>';
 
   }
 
 }
 
 
-document.getElementById("out").onclick =
-  async function() {
+async function loadTransactions(){
 
-    try {
+  try{
 
-      await fetch("/api/logout", {
-        method: "POST"
-      });
+    const response =
+      await fetch("/api/transactions");
 
-    } finally {
+    if(!response.ok){
 
-      window.location.href = "/";
+      transactionsEl.innerHTML = `
+        <div style="color:#8195b0">
+          No recent activity yet.
+        </div>
+      `;
 
+      return;
     }
 
-  };
+
+    const data =
+      await response.json();
+
+    const transactions =
+      data.transactions || [];
+
+
+    if(!transactions.length){
+
+      transactionsEl.innerHTML = `
+        <div style="color:#8195b0">
+          Complete your first task and your activity will appear here.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    transactionsEl.innerHTML =
+      transactions.slice(0,5).map(item => {
+
+        const amount =
+          Number(item.amount_cents || 0) / 100;
+
+        const positive =
+          amount >= 0;
+
+        return `
+
+          <div class="tx">
+
+            <div class="tx-left">
+
+              <div class="tx-icon">
+                ${positive ? "🎮" : "💳"}
+              </div>
+
+              <div>
+
+                <div class="tx-name">
+                  ${escapeHtml(item.description || "Activity")}
+                </div>
+
+                <div class="tx-date">
+                  Recent activity
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="tx-amount"
+                 style="color:${positive ? "#61d59a" : "#ff8d8d"}">
+
+              ${positive ? "+" : "-"}$${Math.abs(amount).toFixed(2)}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    transactionsEl.innerHTML = `
+      <div style="color:#8195b0">
+        No recent activity yet.
+      </div>
+    `;
+
+  }
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+
+    .replaceAll("&","&amp;")
+
+    .replaceAll("<","&lt;")
+
+    .replaceAll(">","&gt;")
+
+    .replaceAll('"',"&quot;")
+
+    .replaceAll("'","&#039;");
+
+}
+
+
+document
+  .getElementById("logout")
+  .addEventListener("click", async()=>{
+
+    await fetch(
+      "/api/logout",
+      {
+        method:"POST"
+      }
+    );
+
+    window.location.href="/";
+
+  });
 
 
 loadDashboard();
