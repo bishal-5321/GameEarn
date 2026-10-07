@@ -1,152 +1,77 @@
-const express = require("express");
-const session = require("express-session");
-const bcrypt = require("bcryptjs");
-const { Pool } = require("pg");
-const path = require("path");
+const express=require("express"),session=require("express-session"),bcrypt=require("bcryptjs"),nodemailer=require("nodemailer"),{Pool}=require("pg"),crypto=require("crypto"),path=require("path");
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app=express(),PORT=process.env.PORT||3000;
 
-// =========================================================
-// DATABASE
-// =========================================================
+const pool=process.env.DATABASE_URL
+?new Pool({
+    connectionString:process.env.DATABASE_URL,
+    ssl:process.env.DATABASE_URL.includes("localhost")
+      ?false
+      :{rejectUnauthorized:false}
+  })
+:null;
 
-const pool = process.env.DATABASE_URL
-  ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes("localhost")
-        ? false
-        : { rejectUnauthorized: false }
-    })
-  : null;
-
-// =========================================================
-// MIDDLEWARE
-// =========================================================
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "CHANGE_THIS",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 6048e5,
-      httpOnly: true,
-      sameSite: "lax"
+const mailer=process.env.SMTP_HOST
+?nodemailer.createTransport({
+    host:process.env.SMTP_HOST,
+    port:+(process.env.SMTP_PORT||587),
+    secure:String(process.env.SMTP_SECURE||"false")==="true",
+    auth:{
+      user:process.env.SMTP_USER,
+      pass:process.env.SMTP_PASS
     }
   })
-);
+:null;
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
-// =========================================================
-// DATABASE HELPER
-// =========================================================
-
-const db = (query, params = []) => {
-  if (!pool) {
-    throw new Error("DATABASE_URL is not configured.");
+app.use(session({
+  secret:process.env.SESSION_SECRET||"CHANGE_THIS",
+  resave:false,
+  saveUninitialized:false,
+  cookie:{
+    maxAge:6048e5,
+    httpOnly:true,
+    sameSite:"lax"
   }
+}));
 
-  return pool.query(query, params);
+app.use(express.static(path.join(__dirname,"public")));
+
+const db=(q,p=[])=>{
+  if(!pool) throw Error("DATABASE_URL is not configured.");
+  return pool.query(q,p);
 };
 
-// =========================================================
-// DATABASE INITIALIZATION + MIGRATION
-// =========================================================
+async function init(){
 
-async function init() {
-  if (!pool) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
+  if(!pool) return;
 
-  // USERS
   await db(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users(
       id SERIAL PRIMARY KEY,
       username VARCHAR(40) UNIQUE NOT NULL,
       email VARCHAR(160) UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       balance_cents INTEGER DEFAULT 0,
       referral_code VARCHAR(20) UNIQUE NOT NULL,
-      email_verified BOOLEAN DEFAULT TRUE,
+      email_verified BOOLEAN DEFAULT FALSE,
       verification_token TEXT,
       verification_expires TIMESTAMPTZ,
       created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
+    );
 
-  // Add missing columns to old databases
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS balance_cents INTEGER DEFAULT 0
-  `);
-
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20)
-  `);
-
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT TRUE
-  `);
-
-  await db(`
-    ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  // Make existing accounts usable without verification
-  await db(`
-    UPDATE users
-    SET email_verified = TRUE
-    WHERE email_verified IS NULL OR email_verified = FALSE
-  `);
-
-  // TRANSACTIONS
-  await db(`
-    CREATE TABLE IF NOT EXISTS transactions (
+    CREATE TABLE IF NOT EXISTS transactions(
       id SERIAL PRIMARY KEY,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       type VARCHAR(30),
       amount_cents INTEGER,
       description TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
+    );
 
-  await db(`
-    ALTER TABLE transactions
-    ADD COLUMN IF NOT EXISTS user_id INTEGER
-  `);
-
-  await db(`
-    ALTER TABLE transactions
-    ADD COLUMN IF NOT EXISTS type VARCHAR(30)
-  `);
-
-  await db(`
-    ALTER TABLE transactions
-    ADD COLUMN IF NOT EXISTS amount_cents INTEGER
-  `);
-
-  await db(`
-    ALTER TABLE transactions
-    ADD COLUMN IF NOT EXISTS description TEXT
-  `);
-
-  await db(`
-    ALTER TABLE transactions
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  // WITHDRAWALS
-  await db(`
-    CREATE TABLE IF NOT EXISTS withdrawals (
+    CREATE TABLE IF NOT EXISTS withdrawals(
       id SERIAL PRIMARY KEY,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       amount_cents INTEGER,
@@ -156,594 +81,511 @@ async function init() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS user_id INTEGER
-  `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS amount_cents INTEGER
-  `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS method VARCHAR(30)
-  `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS details TEXT
-  `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'PENDING'
-  `);
-
-  await db(`
-    ALTER TABLE withdrawals
-    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  console.log("Database initialization completed.");
 }
 
-// =========================================================
-// AUTH
-// =========================================================
+const auth=(q,s,n)=>
+  q.session.userId
+    ?n()
+    :s.status(401).json({error:"Please sign in."});
 
-const auth = (req, res, next) => {
-  if (req.session.userId) {
-    return next();
-  }
+const tok=()=>crypto.randomBytes(32).toString("hex");
 
-  return res.status(401).json({
-    error: "Please sign in."
-  });
-};
 
-// =========================================================
-// HEALTH CHECK
-// =========================================================
+app.get("/api/health",(q,s)=>
+  s.json({
+    ok:true,
+    version:"2.0"
+  })
+);
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    version: "2.0"
-  });
-});
 
-// =========================================================
-// REGISTER
-// =========================================================
+app.post("/api/register",async(q,s)=>{
 
-app.post("/api/register", async (req, res) => {
-  try {
-    const username = String(req.body.username || "").trim();
-    const email = String(req.body.email || "")
-      .trim()
-      .toLowerCase();
+  try{
 
-    const password = String(req.body.password || "");
+    let u=String(q.body.username||"").trim();
+    let e=String(q.body.email||"").trim().toLowerCase();
+    let p=String(q.body.password||"");
 
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        error: "All fields are required."
+    if(!u||!e||!p)
+      return s.status(400).json({
+        error:"All fields are required."
       });
-    }
 
-    if (password.length < 6) {
-      return res.status(400).json({
-        error: "Password must be at least 6 characters."
+    if(p.length<6)
+      return s.status(400).json({
+        error:"Password must be at least 6 characters."
       });
-    }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    let t=tok();
 
-    const referralCode = require("crypto")
+    let h=await bcrypt.hash(p,10);
+
+    let c=crypto
       .randomBytes(5)
       .toString("hex")
       .toUpperCase();
 
     await db(
-      `
-      INSERT INTO users (
-        username,
-        email,
-        password_hash,
-        referral_code,
-        email_verified
-      )
-      VALUES (
-        $1,
-        $2,
-        $3,
-        $4,
-        TRUE
-      )
-      `,
-      [
-        username,
-        email,
-        passwordHash,
-        referralCode
-      ]
+      "INSERT INTO users(username,email,password_hash,referral_code,verification_token,verification_expires) VALUES($1,$2,$3,$4,$5,NOW()+INTERVAL '24 hours')",
+      [u,e,h,c,t]
     );
 
-    res.json({
-      ok: true,
-      message: "Account created successfully."
-    });
+    if(mailer){
 
-  } catch (error) {
-    console.error("REGISTRATION ERROR:", error);
+      let base=
+        process.env.APP_URL||
+        `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
 
-    if (error.code === "23505") {
-      return res.status(409).json({
-        error: "Username or email already exists."
+      let url=
+        `${base}/verify.html?token=${t}`;
+
+      await mailer.sendMail({
+        from:
+          process.env.SMTP_FROM||
+          process.env.SMTP_USER,
+        to:e,
+        subject:"Verify your GameEarn email",
+        html:
+          `<h2>Welcome to GameEarn</h2>
+           <p><a href="${url}">Verify your email</a></p>
+           <p>This link expires in 24 hours.</p>`
       });
     }
 
-    return res.status(500).json({
-      error: "Registration failed."
+    s.json({
+      ok:true,
+      message:
+        mailer
+        ?"Account created. Check your email to verify it."
+        :"Account created, but SMTP email delivery is not configured yet."
+    });
+
+  }catch(e){
+
+    console.error(e);
+
+    s.status(
+      e.code==="23505"
+      ?409
+      :500
+    ).json({
+      error:
+        e.code==="23505"
+        ?"Username or email already exists."
+        :"Registration failed."
     });
   }
 });
 
-// =========================================================
-// LOGIN
-// =========================================================
 
-app.post("/api/login", async (req, res) => {
-  try {
-    const email = String(req.body.email || "")
+app.get("/api/verify",async(q,s)=>{
+
+  try{
+
+    let r=await db(
+      "UPDATE users SET email_verified=TRUE,verification_token=NULL,verification_expires=NULL WHERE verification_token=$1 AND verification_expires>NOW() RETURNING id",
+      [String(q.query.token||"")]
+    );
+
+    if(!r.rowCount)
+      return s.status(400).json({
+        error:"Invalid or expired verification link."
+      });
+
+    s.json({
+      ok:true,
+      message:"Email verified. You can now sign in."
+    });
+
+  }catch(e){
+
+    s.status(500).json({
+      error:"Verification failed."
+    });
+  }
+});
+
+
+app.post("/api/resend-verification",async(q,s)=>{
+
+  try{
+
+    let e=
+      String(q.body.email||"")
       .trim()
       .toLowerCase();
 
-    const password = String(req.body.password || "");
-
-    const result = await db(
-      `
-      SELECT *
-      FROM users
-      WHERE email = $1
-      `,
-      [email]
+    let r=await db(
+      "SELECT id,email,email_verified FROM users WHERE email=$1",
+      [e]
     );
 
-    if (!result.rowCount) {
-      return res.status(401).json({
-        error: "Invalid email or password."
+    if(!r.rowCount||r.rows[0].email_verified)
+      return s.json({
+        ok:true,
+        message:"If needed, a verification email was sent."
       });
-    }
 
-    const user = result.rows[0];
+    if(!mailer)
+      return s.status(503).json({
+        error:"Email delivery is not configured yet."
+      });
 
-    const passwordCorrect = await bcrypt.compare(
-      password,
-      user.password_hash
+    let t=tok();
+
+    await db(
+      "UPDATE users SET verification_token=$1,verification_expires=NOW()+INTERVAL '24 hours' WHERE id=$2",
+      [t,r.rows[0].id]
     );
 
-    if (!passwordCorrect) {
-      return res.status(401).json({
-        error: "Invalid email or password."
-      });
-    }
+    let base=
+      process.env.APP_URL||
+      `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
 
-    req.session.userId = user.id;
+    let url=
+      `${base}/verify.html?token=${t}`;
 
-    res.json({
-      ok: true
+    await mailer.sendMail({
+      from:
+        process.env.SMTP_FROM||
+        process.env.SMTP_USER,
+      to:e,
+      subject:"Verify your GameEarn email",
+      html:
+        `<p><a href="${url}">Verify your GameEarn email</a></p>`
     });
 
-  } catch (error) {
-    console.error("LOGIN ERROR:", error);
+    s.json({
+      ok:true,
+      message:"Verification email sent."
+    });
 
-    res.status(500).json({
-      error: "Login failed."
+  }catch(e){
+
+    s.status(500).json({
+      error:"Could not resend verification email."
     });
   }
 });
 
-// =========================================================
-// LOGOUT
-// =========================================================
 
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.json({
-      ok: true
-    });
-  });
-});
+app.post("/api/login",async(q,s)=>{
 
-// =========================================================
-// CURRENT USER
-// =========================================================
+  try{
 
-app.get("/api/me", auth, async (req, res) => {
-  try {
-    const result = await db(
-      `
-      SELECT
-        id,
-        username,
-        email,
-        balance_cents,
-        referral_code
+    let e=
+      String(q.body.email||"")
+      .trim()
+      .toLowerCase();
 
-      FROM users
-
-      WHERE id = $1
-      `,
-      [req.session.userId]
+    let r=await db(
+      "SELECT * FROM users WHERE email=$1",
+      [e]
     );
 
-    if (!result.rowCount) {
-      return res.status(404).json({
-        error: "User not found."
+    if(
+      !r.rowCount||
+      !(await bcrypt.compare(
+        q.body.password,
+        r.rows[0].password_hash
+      ))
+    )
+      return s.status(401).json({
+        error:"Invalid email or password."
       });
-    }
 
-    res.json({
-      user: result.rows[0]
+    if(!r.rows[0].email_verified)
+      return s.status(403).json({
+        error:"Please verify your email before signing in."
+      });
+
+    q.session.userId=
+      r.rows[0].id;
+
+    s.json({
+      ok:true
     });
 
-  } catch (error) {
-    console.error("ME ERROR:", error);
+  }catch(e){
 
-    res.status(500).json({
-      error: "Could not load account."
+    s.status(500).json({
+      error:"Login failed."
     });
   }
 });
 
-// =========================================================
-// OFFERS
-// =========================================================
 
-const offers = {
-  game1: [
-    "Reach Level 5",
-    "Games",
-    96
-  ],
+app.post("/api/logout",(q,s)=>
+  q.session.destroy(()=>
+    s.json({ok:true})
+  )
+);
 
-  game2: [
-    "Complete starter mission",
-    "Games",
-    250
-  ],
 
-  survey1: [
-    "Take a short survey",
-    "Surveys",
-    75
-  ],
+app.get(
+  "/api/me",
+  (q,s,n)=>auth(q,s,n),
+  async(q,s)=>{
 
-  app1: [
-    "Try a new app",
-    "Apps",
-    180
-  ]
+    let r=await db(
+      "SELECT id,username,email,balance_cents,referral_code FROM users WHERE id=$1",
+      [q.session.userId]
+    );
+
+    s.json({
+      user:r.rows[0]
+    });
+  }
+);
+
+
+const offers={
+  game1:["Reach Level 5","Games",96],
+  game2:["Complete starter mission","Games",250],
+  survey1:["Take a short survey","Surveys",75],
+  app1:["Try a new app","Apps",180]
 };
 
-// =========================================================
-// GET OFFERS
-// =========================================================
 
-app.get("/api/offers", auth, (req, res) => {
-  res.json({
-    offers: Object.entries(offers).map(
-      ([id, data]) => ({
-        id,
-        title: data[0],
-        category: data[1],
-        reward_cents: data[2]
-      })
-    )
-  });
-});
+app.get(
+  "/api/offers",
+  (q,s,n)=>auth(q,s,n),
+  (q,s)=>
+    s.json({
+      offers:
+        Object.entries(offers)
+        .map(([id,x])=>({
+          id,
+          title:x[0],
+          category:x[1],
+          reward_cents:x[2]
+        }))
+    })
+);
 
-// =========================================================
-// COMPLETE OFFER
-// =========================================================
 
 app.post(
   "/api/offers/:id/complete",
-  auth,
-  async (req, res) => {
-    const offer = offers[req.params.id];
+  (q,s,n)=>auth(q,s,n),
+  async(q,s)=>{
 
-    if (!offer) {
-      return res.status(404).json({
-        error: "Offer not found."
+    let o=offers[q.params.id];
+
+    if(!o)
+      return s.status(404).json({
+        error:"Offer not found."
       });
-    }
 
-    try {
+    try{
+
       await db(
-        `
-        UPDATE users
-
-        SET balance_cents =
-          balance_cents + $1
-
-        WHERE id = $2
-        `,
-        [
-          offer[2],
-          req.session.userId
-        ]
+        "UPDATE users SET balance_cents=balance_cents+$1 WHERE id=$2",
+        [o[2],q.session.userId]
       );
 
       await db(
-        `
-        INSERT INTO transactions (
-          user_id,
-          type,
-          amount_cents,
-          description
-        )
-
-        VALUES (
-          $1,
-          'OFFER',
-          $2,
-          $3
-        )
-        `,
-        [
-          req.session.userId,
-          offer[2],
-          offer[0]
-        ]
+        "INSERT INTO transactions(user_id,type,amount_cents,description) VALUES($1,'OFFER',$2,$3)",
+        [q.session.userId,o[2],o[0]]
       );
 
-      res.json({
-        ok: true,
-        reward_cents: offer[2]
+      s.json({
+        ok:true,
+        reward_cents:o[2]
       });
 
-    } catch (error) {
-      console.error("OFFER ERROR:", error);
+    }catch(e){
 
-      res.status(500).json({
-        error: "Could not credit reward."
+      s.status(500).json({
+        error:"Could not credit reward."
       });
     }
   }
 );
 
-// =========================================================
-// TRANSACTIONS
-// =========================================================
 
 app.get(
   "/api/transactions",
-  auth,
-  async (req, res) => {
-    try {
-      const result = await db(
-        `
-        SELECT *
-
-        FROM transactions
-
-        WHERE user_id = $1
-
-        ORDER BY created_at DESC
-
-        LIMIT 50
-        `,
-        [req.session.userId]
-      );
-
-      res.json({
-        transactions: result.rows
-      });
-
-    } catch (error) {
-      console.error(
-        "TRANSACTIONS ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error: "Could not load transactions."
-      });
-    }
-  }
+  (q,s,n)=>auth(q,s,n),
+  async(q,s)=>
+    s.json({
+      transactions:
+        (
+          await db(
+            "SELECT * FROM transactions WHERE user_id=$1 ORDER BY created_at DESC LIMIT 50",
+            [q.session.userId]
+          )
+        ).rows
+    })
 );
 
-// =========================================================
-// WITHDRAW
-// =========================================================
+
+/* =========================================
+   WITHDRAWAL
+   ========================================= */
 
 app.post(
   "/api/withdraw",
-  auth,
-  async (req, res) => {
-    try {
-      const amount = Math.round(
-        Number(req.body.amount_cents)
-      );
+  (q,s,n)=>auth(q,s,n),
+  async(q,s)=>{
 
-      const method = String(
-        req.body.method || ""
-      );
+    try{
 
-      const details = String(
-        req.body.details || ""
-      ).trim();
+      let a=
+        Math.round(
+          +q.body.amount_cents
+        );
 
-      // Minimum withdrawal = $1
-      if (
-        !Number.isInteger(amount) ||
-        amount < 100
-      ) {
-        return res.status(400).json({
-          error: "Minimum withdrawal is $1.00."
+      let m=
+        String(
+          q.body.method||""
+        );
+
+      let d=
+        String(
+          q.body.details||""
+        ).trim();
+
+
+      /*
+       * STEAM ACCOUNT = $1 MINIMUM
+       *
+       * UPI = $10 MINIMUM
+       * PAYPAL = $10 MINIMUM
+       * GIFT CARD = $10 MINIMUM
+       */
+
+      const minimumCents =
+        m==="game_reward"
+          ?100
+          :1000;
+
+
+      if(
+        !Number.isInteger(a)||
+        a<minimumCents
+      ){
+
+        return s.status(400).json({
+          error:
+            `Minimum withdrawal for ${
+              m==="game_reward"
+                ?"Steam Account"
+                :"this payout method"
+            } is $${(
+              minimumCents/100
+            ).toFixed(2)}.`
         });
       }
 
-      const allowedMethods = [
-        "paypal",
-        "upi",
-        "gift_card",
-        "game_reward"
-      ];
 
-      if (!allowedMethods.includes(method)) {
-        return res.status(400).json({
-          error: "Invalid withdrawal method."
+      if(
+        ![
+          "paypal",
+          "upi",
+          "gift_card",
+          "game_reward"
+        ].includes(m)
+      ){
+
+        return s.status(400).json({
+          error:"Invalid method."
         });
       }
 
-      const user = await db(
-        `
-        SELECT balance_cents
 
-        FROM users
+      let u=
+        await db(
+          "SELECT balance_cents FROM users WHERE id=$1",
+          [q.session.userId]
+        );
 
-        WHERE id = $1
-        `,
-        [req.session.userId]
-      );
 
-      if (!user.rowCount) {
-        return res.status(404).json({
-          error: "User not found."
+      if(
+        !u.rowCount||
+        u.rows[0].balance_cents<a
+      ){
+
+        return s.status(400).json({
+          error:"Insufficient balance."
         });
       }
 
-      if (
-        user.rows[0].balance_cents <
-        amount
-      ) {
-        return res.status(400).json({
-          error: "Insufficient balance."
-        });
-      }
 
-      // Remove balance
       await db(
-        `
-        UPDATE users
-
-        SET balance_cents =
-          balance_cents - $1
-
-        WHERE id = $2
-        `,
-        [
-          amount,
-          req.session.userId
-        ]
+        "UPDATE users SET balance_cents=balance_cents-$1 WHERE id=$2",
+        [a,q.session.userId]
       );
 
-      // Create withdrawal
-      const withdrawal = await db(
-        `
-        INSERT INTO withdrawals (
-          user_id,
-          amount_cents,
-          method,
-          details
-        )
 
-        VALUES (
-          $1,
-          $2,
-          $3,
-          $4
-        )
+      let w=
+        await db(
+          "INSERT INTO withdrawals(user_id,amount_cents,method,details) VALUES($1,$2,$3,$4) RETURNING id,status",
+          [
+            q.session.userId,
+            a,
+            m,
+            d
+          ]
+        );
 
-        RETURNING id, status
-        `,
-        [
-          req.session.userId,
-          amount,
-          method,
-          details
-        ]
-      );
 
-      // Transaction record
       await db(
-        `
-        INSERT INTO transactions (
-          user_id,
-          type,
-          amount_cents,
-          description
-        )
-
-        VALUES (
-          $1,
-          'WITHDRAWAL',
-          $2,
-          $3
-        )
-        `,
+        "INSERT INTO transactions(user_id,type,amount_cents,description) VALUES($1,'WITHDRAWAL',$2,$3)",
         [
-          req.session.userId,
-          -amount,
-          `Withdrawal #${withdrawal.rows[0].id}`
+          q.session.userId,
+          -a,
+          `Withdrawal #${w.rows[0].id}`
         ]
       );
 
-      res.json({
-        ok: true,
-        withdrawal: withdrawal.rows[0]
+
+      s.json({
+        ok:true,
+        withdrawal:
+          w.rows[0]
       });
 
-    } catch (error) {
+
+    }catch(e){
+
       console.error(
         "WITHDRAW ERROR:",
-        error
+        e
       );
 
-      res.status(500).json({
-        error: "Withdrawal request failed."
+      s.status(500).json({
+        error:"Withdrawal request failed."
       });
     }
   }
 );
 
-// =========================================================
-// FRONTEND
-// =========================================================
 
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "index.html"
+app.get(
+  "*",
+  (q,s)=>
+    s.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
     )
-  );
-});
+);
 
-// =========================================================
-// START
-// =========================================================
 
 init()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(
-        "GameEarn v2 running on port " + PORT
-      );
-    });
-  })
-  .catch((error) => {
-    console.error(
-      "DATABASE INITIALIZATION ERROR:",
-      error
-    );
-
+  .then(()=>
+    app.listen(
+      PORT,
+      ()=>
+        console.log(
+          "GameEarn v2 running on "+PORT
+        )
+    )
+  )
+  .catch(e=>{
+    console.error(e);
     process.exit(1);
   });
