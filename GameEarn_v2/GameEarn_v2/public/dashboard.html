@@ -1,485 +1,60 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>GameEarn Dashboard</title>
+  <meta charset="UTF-8">
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
 
-body{
-  margin:0;
-  background:#06101f;
-  color:#fff;
-  font-family:Arial,Helvetica,sans-serif;
-}
+  <title>Dashboard</title>
 
-a{
-  color:inherit;
-  text-decoration:none;
-}
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 
-button{
-  font-family:inherit;
-  cursor:pointer;
-}
-
-header{
-  height:76px;
-  padding:0 6%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid #1d3049;
-  background:#071322;
-}
-
-.brand{
-  font-size:27px;
-  font-weight:900;
-  letter-spacing:-1px;
-}
-
-.brand span{
-  color:#5b8cff;
-}
-
-nav{
-  display:flex;
-  align-items:center;
-  gap:28px;
-}
-
-nav a,
-nav button{
-  color:#a9bad1;
-  font-size:15px;
-  font-weight:700;
-  background:none;
-  border:0;
-}
-
-nav a:hover,
-nav button:hover{
-  color:#fff;
-}
-
-main{
-  max-width:1250px;
-  margin:auto;
-  padding:48px 24px 80px;
-}
-
-/* TOP */
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:30px;
-  margin-bottom:30px;
-}
-
-.eyebrow{
-  color:#6595ff;
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:2px;
-}
-
-h1{
-  font-size:40px;
-  margin:10px 0 8px;
-  letter-spacing:-1.5px;
-}
-
-.subtitle{
-  margin:0;
-  color:#8499b5;
-  font-size:16px;
-}
-
-/* BALANCE */
-
-.balance{
-  min-width:230px;
-  padding:25px 28px;
-  border-radius:20px;
-  background:linear-gradient(135deg,#376ff5,#6847ef);
-  box-shadow:0 15px 40px rgba(50,90,240,.20);
-}
-
-.balance small{
-  display:block;
-  color:#d7e1ff;
-  font-weight:800;
-  letter-spacing:1.5px;
-  font-size:12px;
-}
-
-.balance strong{
-  display:block;
-  font-size:36px;
-  margin-top:7px;
-}
-
-/* STATS */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:28px;
-}
-
-.stat{
-  background:#0c1b2d;
-  border:1px solid #203754;
-  border-radius:18px;
-  padding:21px;
-}
-
-.stat-icon{
-  font-size:23px;
-  margin-bottom:12px;
-}
-
-.stat-label{
-  color:#8095b1;
-  font-size:13px;
-}
-
-.stat-value{
-  font-size:24px;
-  font-weight:800;
-  margin-top:5px;
-}
-
-/* DAILY */
-
-.daily{
-  background:#0c1b2d;
-  border:1px solid #203754;
-  border-radius:22px;
-  padding:27px;
-  margin-bottom:28px;
-}
-
-.daily-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
-
-.daily h2{
-  margin:0 0 7px;
-  font-size:23px;
-}
-
-.daily p{
-  margin:0;
-  color:#8095b1;
-}
-
-.streak{
-  padding:9px 15px;
-  background:#172b47;
-  border:1px solid #294565;
-  border-radius:30px;
-  color:#ffb84d;
-  font-weight:800;
-}
-
-.progress{
-  height:12px;
-  background:#14263d;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:23px;
-}
-
-.progress-bar{
-  height:100%;
-  width:40%;
-  background:linear-gradient(90deg,#4d82ff,#8056ff);
-  border-radius:20px;
-}
-
-.progress-info{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-  color:#8499b5;
-  font-size:13px;
-}
-
-/* MISSIONS */
-
-.section-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:0 0 15px;
-}
-
-.section-title h2{
-  font-size:23px;
-  margin:0;
-}
-
-.section-title a{
-  color:#6f9aff;
-  font-size:14px;
-  font-weight:700;
-}
-
-.missions{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-bottom:28px;
-}
-
-.mission{
-  background:#0c1b2d;
-  border:1px solid #203754;
-  border-radius:19px;
-  padding:22px;
-  transition:.2s;
-}
-
-.mission:hover{
-  transform:translateY(-3px);
-  border-color:#385b86;
-}
-
-.mission-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.mission-icon{
-  width:45px;
-  height:45px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:13px;
-  background:#152844;
-  font-size:22px;
-}
-
-.reward{
-  color:#62d69c;
-  font-size:14px;
-  font-weight:800;
-}
-
-.mission h3{
-  margin:17px 0 7px;
-  font-size:18px;
-}
-
-.mission p{
-  margin:0;
-  color:#8499b5;
-  line-height:1.5;
-  font-size:14px;
-}
-
-.mission-button{
-  display:block;
-  text-align:center;
-  margin-top:17px;
-  padding:11px;
-  border-radius:11px;
-  background:#315fca;
-  color:white;
-  font-size:14px;
-  font-weight:800;
-}
-
-/* LOWER */
-
-.lower{
-  display:grid;
-  grid-template-columns:1.4fr .8fr;
-  gap:18px;
-}
-
-.panel{
-  background:#0c1b2d;
-  border:1px solid #203754;
-  border-radius:21px;
-  padding:25px;
-}
-
-.panel h2{
-  margin:0 0 18px;
-  font-size:22px;
-}
-
-.tx{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 0;
-  border-bottom:1px solid #172b42;
-}
-
-.tx:last-child{
-  border-bottom:0;
-}
-
-.tx-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.tx-icon{
-  width:40px;
-  height:40px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#14253c;
-  border-radius:11px;
-}
-
-.tx-name{
-  font-weight:700;
-}
-
-.tx-date{
-  color:#7187a3;
-  font-size:12px;
-  margin-top:3px;
-}
-
-.tx-amount{
-  color:#61d59a;
-  font-weight:800;
-}
-
-/* QUICK */
-
-.quick{
-  display:grid;
-  gap:12px;
-}
-
-.quick a{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:17px;
-  background:#101f33;
-  border:1px solid #203754;
-  border-radius:14px;
-  transition:.2s;
-}
-
-.quick a:hover{
-  border-color:#41689b;
-  transform:translateX(3px);
-}
-
-.quick-icon{
-  font-size:23px;
-}
-
-.quick-title{
-  font-weight:800;
-}
-
-.quick-text{
-  color:#778da8;
-  font-size:12px;
-  margin-top:3px;
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .missions{
-    grid-template-columns:1fr;
-  }
-
-  .lower{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:650px){
-
-  header{
-    padding:0 18px;
-  }
-
-  nav{
-    gap:12px;
-  }
-
-  nav a:nth-child(2){
-    display:none;
-  }
-
-  main{
-    padding:30px 16px 60px;
-  }
-
-  .top{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .balance{
-    width:100%;
-  }
-
-  h1{
-    font-size:32px;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .daily-head{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-}
-</style>
 </head>
+
 
 <body>
 
+
 <header>
 
-  <a class="brand" href="/dashboard.html">
+  <!-- FIXED: logo now goes to dashboard -->
+  <a
+    class="brand"
+    href="/dashboard.html"
+  >
     GAME<span>EARN</span>
   </a>
 
+
   <nav>
-    <a href="/dashboard.html">Dashboard</a>
-    <a href="/offers.html">Earn</a>
-    <a href="/withdraw.html">Redeem</a>
-    <a href="/referrals.html">Referrals</a>
-    <button id="logout">Log out</button>
+
+    <a href="/offers.html">
+      Earn
+    </a>
+
+    <a href="/withdraw.html">
+      Redeem
+    </a>
+
+    <a href="/referrals.html">
+      Referrals
+    </a>
+
+    <button
+      id="out"
+      class="link"
+    >
+      Log out
+    </button>
+
   </nav>
 
 </header>
@@ -487,546 +62,252 @@ h1{
 
 <main>
 
-  <!-- TOP -->
 
-  <section class="top">
+  <div class="dash">
 
     <div>
-      <div class="eyebrow">YOUR DASHBOARD</div>
+
+      <small>
+        YOUR DASHBOARD
+      </small>
 
       <h1>
-        Hey, <span id="username">...</span> 👋
+        Hey,
+        <span id="name">
+          ...
+        </span>
+        👋
       </h1>
 
-      <p class="subtitle">
-        Keep earning. Your next reward is waiting.
-      </p>
     </div>
 
 
     <div class="balance">
 
-      <small>AVAILABLE BALANCE</small>
+      <small>
+        AVAILABLE
+      </small>
 
       <strong>
-        $<span id="balance">0.00</span>
+        $<span id="bal">
+          0.00
+        </span>
       </strong>
 
     </div>
 
-  </section>
+  </div>
 
 
-  <!-- STATS -->
-
-  <section class="stats">
-
-    <div class="stat">
-      <div class="stat-icon">💰</div>
-      <div class="stat-label">Total balance</div>
-      <div class="stat-value">
-        $<span id="balance2">0.00</span>
-      </div>
-    </div>
+  <div class="features">
 
 
-    <div class="stat">
-      <div class="stat-icon">🎮</div>
-      <div class="stat-label">Tasks completed</div>
-      <div class="stat-value" id="tasks">
-        0
-      </div>
-    </div>
+    <a
+      class="feature"
+      href="/offers.html"
+    >
 
+      🎮
 
-    <div class="stat">
-      <div class="stat-icon">🔥</div>
-      <div class="stat-label">Daily streak</div>
-      <div class="stat-value">
-        1 day
-      </div>
-    </div>
+      <h3>
+        Earn rewards
+      </h3>
 
+      <p>
+        Games, apps and tasks →
+      </p>
 
-    <div class="stat">
-      <div class="stat-icon">🏆</div>
-      <div class="stat-label">Weekly rank</div>
-      <div class="stat-value">
-        #--
-      </div>
-    </div>
-
-  </section>
-
-
-  <!-- DAILY GOAL -->
-
-  <section class="daily">
-
-    <div class="daily-head">
-
-      <div>
-        <h2>🎯 Today's earning goal</h2>
-
-        <p>
-          Complete 10 tasks to unlock today's goal reward.
-        </p>
-      </div>
-
-      <div class="streak">
-        🔥 Keep your streak
-      </div>
-
-    </div>
-
-
-    <div class="progress">
-
-      <div
-        class="progress-bar"
-        id="goalBar">
-      </div>
-
-    </div>
-
-
-    <div class="progress-info">
-
-      <span>
-        <span id="goalCount">0</span> / 10 completed
-      </span>
-
-      <span>
-        Goal reward: +$0.50
-      </span>
-
-    </div>
-
-  </section>
-
-
-  <!-- MISSIONS -->
-
-  <div class="section-title">
-
-    <h2>Today's missions</h2>
-
-    <a href="/offers.html">
-      View all →
     </a>
+
+
+    <a
+      class="feature"
+      href="/withdraw.html"
+    >
+
+      💳
+
+      <h3>
+        Redeem
+      </h3>
+
+      <p>
+        Minimum $1 →
+      </p>
+
+    </a>
+
+
+    <a
+      class="feature"
+      href="/referrals.html"
+    >
+
+      👥
+
+      <h3>
+        Refer friends
+      </h3>
+
+      <p>
+        Share your code →
+      </p>
+
+    </a>
+
 
   </div>
 
 
-  <section class="missions">
+  <section class="panel">
 
-    <a class="mission" href="/offers.html">
+    <h2>
+      Recent activity
+    </h2>
 
-      <div class="mission-top">
-
-        <div class="mission-icon">
-          🎮
-        </div>
-
-        <div class="reward">
-          +$0.96
-        </div>
-
-      </div>
-
-      <h3>Reach Level 5</h3>
-
-      <p>
-        Complete the game milestone and receive your reward.
-      </p>
-
-      <div class="mission-button">
-        Start mission →
-      </div>
-
-    </a>
-
-
-    <a class="mission" href="/offers.html">
-
-      <div class="mission-top">
-
-        <div class="mission-icon">
-          📱
-        </div>
-
-        <div class="reward">
-          +$2.50
-        </div>
-
-      </div>
-
-      <h3>Complete a new task</h3>
-
-      <p>
-        Discover available apps, games and qualifying tasks.
-      </p>
-
-      <div class="mission-button">
-        Earn now →
-      </div>
-
-    </a>
-
-
-    <a class="mission" href="/referrals.html">
-
-      <div class="mission-top">
-
-        <div class="mission-icon">
-          👥
-        </div>
-
-        <div class="reward">
-          +$1.00
-        </div>
-
-      </div>
-
-      <h3>Invite a friend</h3>
-
-      <p>
-        Share your referral code and earn when your friend qualifies.
-      </p>
-
-      <div class="mission-button">
-        Invite friends →
-      </div>
-
-    </a>
-
-  </section>
-
-
-  <!-- LOWER -->
-
-  <section class="lower">
-
-
-    <!-- ACTIVITY -->
-
-    <div class="panel">
-
-      <h2>⚡ Recent activity</h2>
-
-      <div id="transactions">
-
-        <div class="tx">
-
-          <div class="tx-left">
-
-            <div class="tx-icon">
-              🎮
-            </div>
-
-            <div>
-
-              <div class="tx-name">
-                Loading activity...
-              </div>
-
-              <div class="tx-date">
-                Please wait
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- QUICK ACTIONS -->
-
-    <div class="panel">
-
-      <h2>🚀 Quick actions</h2>
-
-      <div class="quick">
-
-        <a href="/offers.html">
-
-          <div class="quick-icon">
-            🎮
-          </div>
-
-          <div>
-            <div class="quick-title">
-              Earn rewards
-            </div>
-
-            <div class="quick-text">
-              Find games and tasks
-            </div>
-          </div>
-
-        </a>
-
-
-        <a href="/withdraw.html">
-
-          <div class="quick-icon">
-            💳
-          </div>
-
-          <div>
-            <div class="quick-title">
-              Redeem
-            </div>
-
-            <div class="quick-text">
-              Request your reward
-            </div>
-          </div>
-
-        </a>
-
-
-        <a href="/referrals.html">
-
-          <div class="quick-icon">
-            👥
-          </div>
-
-          <div>
-            <div class="quick-title">
-              Refer friends
-            </div>
-
-            <div class="quick-text">
-              Earn extra rewards
-            </div>
-          </div>
-
-        </a>
-
-      </div>
-
+    <div id="tx">
+      Loading...
     </div>
 
   </section>
+
 
 </main>
 
 
 <script>
 
-const usernameEl =
-  document.getElementById("username");
 
-const balanceEl =
-  document.getElementById("balance");
+async function load() {
 
-const balance2El =
-  document.getElementById("balance2");
-
-const tasksEl =
-  document.getElementById("tasks");
-
-const transactionsEl =
-  document.getElementById("transactions");
-
-const goalBar =
-  document.getElementById("goalBar");
-
-const goalCount =
-  document.getElementById("goalCount");
-
-
-async function loadDashboard(){
-
-  try{
-
-    const meResponse =
-      await fetch("/api/me");
-
-    if(!meResponse.ok){
-
-      window.location.href="/";
-
-      return;
-    }
-
-    const meData =
-      await meResponse.json();
-
-    const user =
-      meData.user;
-
-
-    usernameEl.textContent =
-      user.username || "Gamer";
-
-
-    const balance =
-      Number(user.balance_cents || 0) / 100;
-
-
-    balanceEl.textContent =
-      balance.toFixed(2);
-
-
-    balance2El.textContent =
-      balance.toFixed(2);
-
-
-    loadTransactions();
-
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-}
-
-
-async function loadTransactions(){
-
-  try{
+  try {
 
     const response =
-      await fetch("/api/transactions");
+      await fetch(
+        "/api/me"
+      );
 
-    if(!response.ok){
 
-      transactionsEl.innerHTML = `
-        <div style="color:#8195b0">
-          No recent activity yet.
-        </div>
-      `;
+    if (!response.ok) {
+
+      location =
+        "/";
 
       return;
+
     }
 
 
     const data =
       await response.json();
 
+
+    const user =
+      data.user;
+
+
+    document.getElementById(
+      "name"
+    ).textContent =
+      user.username;
+
+
+    document.getElementById(
+      "bal"
+    ).textContent =
+      (
+        user.balance_cents / 100
+      ).toFixed(2);
+
+
+    const transactionsResponse =
+      await fetch(
+        "/api/transactions"
+      );
+
+
+    const transactionData =
+      await transactionsResponse.json();
+
+
     const transactions =
-      data.transactions || [];
+      transactionData.transactions;
 
 
-    if(!transactions.length){
+    const tx =
+      document.getElementById(
+        "tx"
+      );
 
-      transactionsEl.innerHTML = `
-        <div style="color:#8195b0">
-          Complete your first task and your activity will appear here.
-        </div>
-      `;
 
-      return;
+    if (
+      transactions &&
+      transactions.length
+    ) {
+
+      tx.innerHTML =
+        transactions
+          .map(
+            x =>
+              `<p class="tx">
+                ${x.description}
+                <b>
+                  ${
+                    x.amount_cents >= 0
+                      ? "+"
+                      : "-"
+                  }$${Math.abs(
+                    x.amount_cents / 100
+                  ).toFixed(2)}
+                </b>
+              </p>`
+          )
+          .join("");
+
+    } else {
+
+      tx.innerHTML =
+        "No activity yet.";
+
     }
 
 
-    transactionsEl.innerHTML =
-      transactions.slice(0,5).map(item => {
+  } catch (error) {
 
-        const amount =
-          Number(item.amount_cents || 0) / 100;
-
-        const positive =
-          amount >= 0;
-
-        return `
-
-          <div class="tx">
-
-            <div class="tx-left">
-
-              <div class="tx-icon">
-                ${positive ? "🎮" : "💳"}
-              </div>
-
-              <div>
-
-                <div class="tx-name">
-                  ${escapeHtml(item.description || "Activity")}
-                </div>
-
-                <div class="tx-date">
-                  Recent activity
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="tx-amount"
-                 style="color:${positive ? "#61d59a" : "#ff8d8d"}">
-
-              ${positive ? "+" : "-"}$${Math.abs(amount).toFixed(2)}
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("");
-
-
-  }catch(error){
-
-    console.error(error);
-
-    transactionsEl.innerHTML = `
-      <div style="color:#8195b0">
-        No recent activity yet.
-      </div>
-    `;
+    console.error(
+      "Dashboard error:",
+      error
+    );
 
   }
 
 }
 
 
-function escapeHtml(value){
-
-  return String(value)
-
-    .replaceAll("&","&amp;")
-
-    .replaceAll("<","&lt;")
-
-    .replaceAll(">","&gt;")
-
-    .replaceAll('"',"&quot;")
-
-    .replaceAll("'","&#039;");
-
-}
-
-
 document
-  .getElementById("logout")
-  .addEventListener("click", async()=>{
+  .getElementById("out")
+  .onclick =
+    async () => {
 
-    await fetch(
-      "/api/logout",
-      {
-        method:"POST"
-      }
-    );
+      await fetch(
+        "/api/logout",
+        {
+          method: "POST"
+        }
+      );
 
-    window.location.href="/";
+      location =
+        "/";
 
-  });
+    };
 
 
-loadDashboard();
+load();
+
 
 </script>
 
+
 </body>
+
 </html>
