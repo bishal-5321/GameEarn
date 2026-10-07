@@ -1,1 +1,576 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title><link rel="stylesheet" href="/style.css"></head><body><header><a class="brand" href="/">GAME<span>EARN</span></a><nav><a href="/offers.html">Earn</a><a href="/withdraw.html">Redeem</a><a href="/referrals.html">Referrals</a><button id="out" class="link">Log out</button></nav></header><main><div class="dash"><div><small>YOUR DASHBOARD</small><h1>Hey, <span id="name">...</span> 👋</h1></div><div class="balance"><small>AVAILABLE</small><strong>$<span id="bal">0.00</span></strong></div></div><div class="features"><a class="feature" href="/offers.html">🎮<h3>Earn rewards</h3><p>Games, apps and tasks →</p></a><a class="feature" href="/withdraw.html">💳<h3>Redeem</h3><p>Minimum $1 →</p></a><a class="feature" href="/referrals.html">👥<h3>Refer friends</h3><p>Share your code →</p></a></div><section class="panel"><h2>Recent activity</h2><div id="tx">Loading...</div></section></main><script>async function load(){let r=await fetch("/api/me");if(!r.ok)return location="/";let u=(await r.json()).user;name.textContent=u.username;bal.textContent=(u.balance_cents/100).toFixed(2);let a=(await(await fetch("/api/transactions")).json()).transactions;tx.innerHTML=a.length?a.map(x=>`<p class="tx">${x.description}<b>${x.amount_cents>=0?"+":"-"}$${Math.abs(x.amount_cents/100).toFixed(2)}</b></p>`).join(""):"No activity yet."}out.onclick=async()=>{await fetch("/api/logout",{method:"POST"});location="/"};load()</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>GameEarn - Dashboard</title>
+
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(82, 91, 255, 0.18), transparent 30%),
+        #06101f;
+      color: #f5f7ff;
+    }
+
+    header {
+      height: 76px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(5, 15, 29, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      text-decoration: none;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: white;
+    }
+
+    .brand span {
+      color: #5d8cff;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    nav a,
+    nav button {
+      color: #dbe5ff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    nav a:hover,
+    nav button:hover {
+      color: #6d91ff;
+    }
+
+    main {
+      width: min(1200px, 92%);
+      margin: 0 auto;
+      padding: 55px 0 80px;
+    }
+
+    .welcome {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: #6f98ff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 54px);
+      letter-spacing: -2px;
+    }
+
+    .subtitle {
+      color: #8ea1c4;
+      margin-top: 12px;
+      font-size: 16px;
+    }
+
+    .balance-card {
+      min-width: 240px;
+      padding: 25px 28px;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, #386cff, #6748e8);
+      box-shadow: 0 20px 50px rgba(64, 82, 255, 0.25);
+    }
+
+    .balance-card small {
+      display: block;
+      color: rgba(255,255,255,0.75);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      font-size: 11px;
+    }
+
+    .balance-card strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 38px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .action {
+      text-decoration: none;
+      color: white;
+      padding: 26px;
+      min-height: 155px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(
+        145deg,
+        rgba(19, 36, 62, 0.95),
+        rgba(10, 24, 43, 0.95)
+      );
+      transition: 0.2s ease;
+    }
+
+    .action:hover {
+      transform: translateY(-5px);
+      border-color: rgba(99, 132, 255, 0.5);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
+
+    .action-icon {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    .action h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .action p {
+      margin: 0;
+      color: #91a4c7;
+      font-size: 14px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 35px 0 15px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .section-title span {
+      color: #6f98ff;
+      font-size: 13px;
+    }
+
+    .earn-banner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 25px;
+      padding: 30px;
+      border-radius: 22px;
+      background:
+        linear-gradient(120deg,
+          rgba(44, 76, 155, 0.45),
+          rgba(91, 49, 157, 0.35));
+      border: 1px solid rgba(112, 142, 255, 0.2);
+      margin-bottom: 28px;
+    }
+
+    .earn-banner h2 {
+      margin: 0 0 8px;
+      font-size: 25px;
+    }
+
+    .earn-banner p {
+      margin: 0;
+      color: #9db0d1;
+      line-height: 1.5;
+    }
+
+    .earn-button {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 12px;
+      background: #527cff;
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .earn-button:hover {
+      background: #668cff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat {
+      padding: 23px;
+      border-radius: 18px;
+      background: #0c1a2d;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .stat small {
+      color: #8196bb;
+      font-size: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 9px;
+      font-size: 25px;
+    }
+
+    .panel {
+      padding: 27px;
+      border-radius: 22px;
+      background: #0c1a2d;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .tx {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 17px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: #9db0d1;
+    }
+
+    .tx:last-child {
+      border-bottom: 0;
+    }
+
+    .tx b {
+      color: #6fa0ff;
+    }
+
+    .empty {
+      color: #8196bb;
+      padding: 15px 0;
+    }
+
+    @media (max-width: 800px) {
+      header {
+        padding: 0 20px;
+      }
+
+      nav {
+        gap: 14px;
+      }
+
+      nav a {
+        display: none;
+      }
+
+      main {
+        width: 92%;
+        padding-top: 35px;
+      }
+
+      .welcome {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .balance-card {
+        width: 100%;
+      }
+
+      .quick-actions,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .earn-banner {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a class="brand" href="/">GAME<span>EARN</span></a>
+
+  <nav>
+    <a href="/offers.html">Earn</a>
+    <a href="/withdraw.html">Redeem</a>
+    <a href="/referrals.html">Referrals</a>
+    <button id="out">Log out</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Welcome -->
+  <section class="welcome">
+
+    <div>
+      <div class="eyebrow">YOUR DASHBOARD</div>
+
+      <h1>
+        Hey, <span id="name">...</span> 👋
+      </h1>
+
+      <p class="subtitle">
+        Earn rewards by completing games, offers and tasks.
+      </p>
+    </div>
+
+    <div class="balance-card">
+      <small>AVAILABLE BALANCE</small>
+      <strong>$<span id="bal">0.00</span></strong>
+    </div>
+
+  </section>
+
+
+  <!-- Main actions -->
+  <section class="quick-actions">
+
+    <a class="action" href="/offers.html">
+      <div class="action-icon">🎮</div>
+      <h3>Earn Rewards</h3>
+      <p>Complete games, apps and tasks to earn.</p>
+    </a>
+
+    <a class="action" href="/withdraw.html">
+      <div class="action-icon">💳</div>
+      <h3>Redeem</h3>
+      <p>Use your balance for available rewards.</p>
+    </a>
+
+    <a class="action" href="/referrals.html">
+      <div class="action-icon">👥</div>
+      <h3>Refer Friends</h3>
+      <p>Invite friends and earn referral rewards.</p>
+    </a>
+
+  </section>
+
+
+  <!-- Earn banner -->
+  <div class="earn-banner">
+
+    <div>
+      <h2>🎮 Ready to earn?</h2>
+
+      <p>
+        Discover available game rewards, offers and tasks.
+        New opportunities can be added regularly.
+      </p>
+    </div>
+
+    <a class="earn-button" href="/offers.html">
+      Browse offers →
+    </a>
+
+  </div>
+
+
+  <!-- Stats -->
+  <div class="section-title">
+    <h2>Your activity</h2>
+    <span>Account overview</span>
+  </div>
+
+  <section class="stats">
+
+    <div class="stat">
+      <small>AVAILABLE BALANCE</small>
+      <strong>$<span id="statBalance">0.00</span></strong>
+    </div>
+
+    <div class="stat">
+      <small>RECENT EARNINGS</small>
+      <strong id="recentTotal">$0.00</strong>
+    </div>
+
+    <div class="stat">
+      <small>ACCOUNT STATUS</small>
+      <strong>Active</strong>
+    </div>
+
+  </section>
+
+
+  <!-- Recent activity -->
+  <section class="panel">
+
+    <h2>Recent activity</h2>
+
+    <div id="tx">
+      Loading...
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+async function loadDashboard() {
+
+  try {
+
+    const response = await fetch("/api/me");
+
+    if (!response.ok) {
+      window.location.href = "/";
+      return;
+    }
+
+    const data = await response.json();
+    const user = data.user;
+
+    document.getElementById("name").textContent =
+      user.username || "Player";
+
+    const balance =
+      Number(user.balance_cents || 0) / 100;
+
+    document.getElementById("bal").textContent =
+      balance.toFixed(2);
+
+    document.getElementById("statBalance").textContent =
+      balance.toFixed(2);
+
+
+    const transactionResponse =
+      await fetch("/api/transactions");
+
+    const transactionData =
+      await transactionResponse.json();
+
+    const transactions =
+      transactionData.transactions || [];
+
+
+    const txContainer =
+      document.getElementById("tx");
+
+
+    if (!transactions.length) {
+
+      txContainer.innerHTML =
+        '<div class="empty">No activity yet. Start earning to see your activity here.</div>';
+
+      document.getElementById("recentTotal").textContent =
+        "$0.00";
+
+      return;
+    }
+
+
+    let recentTotal = 0;
+
+
+    txContainer.innerHTML =
+      transactions.slice(0, 8).map(transaction => {
+
+        const amount =
+          Number(transaction.amount_cents || 0) / 100;
+
+        if (amount > 0) {
+          recentTotal += amount;
+        }
+
+        const sign =
+          amount >= 0 ? "+" : "-";
+
+        return `
+          <div class="tx">
+            <span>
+              ${transaction.description || "Reward"}
+            </span>
+
+            <b>
+              ${sign}$${Math.abs(amount).toFixed(2)}
+            </b>
+          </div>
+        `;
+
+      }).join("");
+
+
+    document.getElementById("recentTotal").textContent =
+      "$" + recentTotal.toFixed(2);
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("tx").innerHTML =
+      '<div class="empty">Unable to load activity.</div>';
+
+  }
+
+}
+
+
+document.getElementById("out").onclick =
+  async function() {
+
+    try {
+
+      await fetch("/api/logout", {
+        method: "POST"
+      });
+
+    } finally {
+
+      window.location.href = "/";
+
+    }
+
+  };
+
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
